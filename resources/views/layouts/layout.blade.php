@@ -11,7 +11,7 @@
     <div class="sidebar">
         <div class="logo-container">    
             <div class="logo">
-                 <img src="{{ url('image/undip.png') }}" alt="Gambar">
+                 <img src="{{ url('image/images.png') }}" alt="Gambar">
                 <div>
                     <div class="logo-text">UNIVERSITAS DIPONEGORO</div>
                     <div class="app-name">UPT PERPUS</div>
