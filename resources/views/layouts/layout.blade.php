@@ -11,7 +11,7 @@
     <div class="sidebar">
         <div class="logo-container">    
             <div class="logo">
-                 <img src="{{ url('image/undip.png') }}" alt="Gambar">
+                 <img src="{{ url('image/images.png') }}" alt="Gambar">
                 <div>
                     <div class="logo-text">UNIVERSITAS DIPONEGORO</div>
                     <div class="app-name">UPT PERPUS</div>
@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="user-info">
-           <img src="{{ url('image/undip.png') }}" alt="Gambar">
+            <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                  viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
