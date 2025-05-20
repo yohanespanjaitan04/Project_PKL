@@ -9,8 +9,8 @@ class JurnalController extends Controller
 {
     public function index()
     {
-        $jurnals = Jurnal::all(); // Ambil semua data
-        return view('jurnal.index', compact('jurnals')); // Kirim ke view
+        $jurnals = Jurnal::paginate(10); // Menggunakan pagination
+        return view('jurnal.index', compact('jurnals'));
     }
 
     public function create()
@@ -20,6 +20,19 @@ class JurnalController extends Controller
 
     public function store(Request $request)
     {
-        // proses simpan
+        // Validasi input
+        $validated = $request->validate([
+            'judul' => 'required|max:255',
+            'penulis' => 'required|max:255',
+            'tahun' => 'required|numeric',
+            'kategori' => 'required|max:255',
+            'isi' => 'required',
+        ]);
+        
+        // Simpan jurnal
+        Jurnal::create($validated);
+        
+        return redirect()->route('jurnal.index')
+            ->with('success', 'Jurnal berhasil ditambahkan!');
     }
 }

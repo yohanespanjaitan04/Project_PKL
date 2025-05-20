@@ -9,9 +9,9 @@
 </head>
 <body>
     <div class="sidebar">
-        <div class="logo-container">
+        <div class="logo-container">    
             <div class="logo">
-                <img src="https://www.undip.ac.id/wp-content/uploads/2013/07/Undip-Logo-Transparan-04.png" alt="UNDIP Logo">
+                 <img src="{{ url('image/undip.png') }}" alt="Gambar">
                 <div>
                     <div class="logo-text">UNIVERSITAS DIPONEGORO</div>
                     <div class="app-name">UPT PERPUS</div>

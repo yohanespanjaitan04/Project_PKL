@@ -16,9 +16,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($jurnals as $j)
+            @forelse($jurnals as $j)
             <tr>
-                <td>{{ $j['id'] }}</td>
+                <td>{{ $loop->iteration }}</td>
                 <td>{{ $j['judul'] }}</td>
                 <td>{{ $j['penulis'] }}</td>
                 <td>{{ $j['tahun'] }}</td>
@@ -32,8 +32,17 @@
                     </form>
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="6" class="text-center">Tidak ada data jurnal</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
+    
+    <!-- Pagination Links -->
+    <div class="pagination-container">
+        {{ $jurnals->links() }}
+    </div>
 </div>
 @endsection
