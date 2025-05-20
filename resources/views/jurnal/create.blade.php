@@ -5,7 +5,7 @@
     <h2>Tambah Referensi Baru</h2>
     <hr>
 
-    <form action="{{ route('referensi.create') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('referensi.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
