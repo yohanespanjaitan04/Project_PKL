@@ -3,6 +3,19 @@
 @section('content')
 <div class="page-title">Daftar Jurnal</div>
 
+{{-- Flash Message --}}
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
 <div class="search-container">
     <input type="text" placeholder="Cari jurnal...">
     <button class="search-button">Cari</button>
@@ -19,17 +32,22 @@
             @forelse($jurnals as $j)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $j['judul'] }}</td>
-                <td>{{ $j['penulis'] }}</td>
-                <td>{{ $j['tahun'] }}</td>
-                <td>{{ $j['kategori'] }}</td>
+                <td>{{ $j->judul }}</td>
+                <td>{{ $j->pengarang }}</td>
+                <td>{{ $j->tahun_publikasi }}</td>
+                <td>{{ $j->tipe_referensi }}</td>
                 <td>
-                    <a href="#" class="btn btn-primary">Lihat</a>
-                    <a href="#" class="btn btn-success">Edit</a>
-                    <form action="#" method="POST" style="display:inline">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-danger">Hapus</button>
+                    <a href="{{ route('jurnal.show', $j->id) }}" class="btn btn-primary">Lihat</a>
+                    <a href="{{ route('jurnal.edit', $j->id) }}" class="btn btn-success">Edit</a>
+                    <form action="{{ route('jurnal.destroy', $j->id) }}" method="POST" style="display:inline" 
+                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus jurnal ini?')">
+                        @csrf 
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Hapus</button>
                     </form>
+                    @if($j->file_path)
+                        <a href="{{ route('jurnal.download', $j->id) }}" class="btn btn-info">Download</a>
+                    @endif
                 </td>
             </tr>
             @empty
@@ -45,4 +63,44 @@
         {{ $jurnals->links() }}
     </div>
 </div>
+
+<style>
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.btn {
+    padding: 5px 10px;
+    margin: 2px;
+    text-decoration: none;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-primary { background-color: #007bff; color: white; }
+.btn-success { background-color: #28a745; color: white; }
+.btn-danger { background-color: #dc3545; color: white; }
+.btn-info { background-color: #17a2b8; color: white; }
+
+.btn:hover {
+    opacity: 0.8;
+}
+</style>
 @endsection

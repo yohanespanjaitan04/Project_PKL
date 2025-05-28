@@ -8,14 +8,38 @@ use Illuminate\Database\Eloquent\Model;
 class Jurnal extends Model
 {
     use HasFactory;
-    
-    protected $table = 'jurnals'; // Pastikan nama tabel sesuai
-    
+
+    protected $table = 'jurnals';
+
     protected $fillable = [
+        'tipe_referensi',
+        'departemen', 
+        'prodi',
+        'semester',
+        'mata_kuliah',
         'judul',
-        'penulis',
-        'tahun',
-        'kategori',
-        'isi'
+        'pengarang',
+        'tahun_publikasi',
+        'issue',
+        'banyak_halaman',
+        'abstrak',
+        'doi',
+        'file_path',
+        'issn',
+        'volume',
+        'nomor',
+        'tahun_terbit',
+        'penerbit',
+        'tempat_terbit',
+        'url',
+        'diakses_tanggal'
+    ];
+
+    protected $casts = [
+        'tahun_publikasi' => 'integer',
+        'semester' => 'integer', 
+        'banyak_halaman' => 'integer',
+        'tahun_terbit' => 'integer',
+        'diakses_tanggal' => 'date'
     ];
 }
