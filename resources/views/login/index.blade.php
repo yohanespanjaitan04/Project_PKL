@@ -237,57 +237,59 @@
             <h2 class="welcome-title">Welcome Back</h2>
             <p class="welcome-subtitle">Sign in to access your journal collections</p>
             
-            <!-- Form Login -->
-            <form action="/login" method="post">
-                @csrf <!-- Laravel CSRF token -->
-                <div class="form-group">
-                    <label class="form-label" for="email">Email Address</label>
+                    <!-- Form Login - Bagian yang diperbaiki -->
+        <form action="/login" method="post">
+            @csrf
+            
+
+            
+            <!-- Tampilkan pesan error jika ada bawbuwabfawf--> 
+            @if(session()->has('LoginError'))
+                <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #f5c6cb;">
+                    {{ session('LoginError') }}
+                </div>
+            @endif
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input 
+                    type="email"  
+                    id="email" 
+                    name="email" 
+                    class="form-input @error('email') is-invalid @enderror" 
+                    placeholder="your@university.edu"
+                    required 
+                    value="{{ old('email') }}"
+                >
+                @error('email')
+                    <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <div class="password-container">
                     <input 
-                        type="email"  
-                        id="email" 
-                        name="email" 
-                        class="form-input @error('email') is-invalid @enderror" 
-                        placeholder="your@university.edu"
-                        required value="{{ old('email')}}"
+                        type="password" 
+                        id="password" 
+                        name="password"
+                        class="form-input" 
+                        placeholder="Password"
+                        required
                     >
-                    @error('email')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-                    @enderror
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="password">Password</label>
-                    <div class="password-container">
-                        <input 
-                            type="password" 
-                            id="password" 
-                            class="form-input" 
-                            placeholder="Password"
-                            required
-                        >
+                @error('password')
+                    <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">
+                        {{ $message }}
                     </div>
+                @enderror
+            </div>
+            
+            <button type="submit" class="sign-in-btn">Sign In</button>
+        </form>
                 </div>
-                <button type="submit" class="sign-in-btn">Sign In</button>
-
-                <!-- @if(session()->has('succes'))
-                    <div class="alert alert-succes alert-dissmissble fade show" role="alert" >
-                        {{ session('succes')}}
-                        <button type="button" class="btn-close" data-bs-dissmis="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-                @if(session()->has('LoginError'))
-                    <div class="alert alert-danger alert-dissmissble fade show" role="alert" >
-                        {{ session('LoginError')}}
-                        <button type="button" class="btn-close" data-bs-dissmis="alert" aria-label="Close"></button>
-                    </div>
-                @endif -->
-
-            </form>
-
-
-        </div>
-    </main>
-</body>
-</html>
+            </main>
+        </body>
+        </html>
