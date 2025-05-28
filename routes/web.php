@@ -2,22 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JurnalController;
-use App\Http\Controllers\ReferensiController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoginController;
-
-
-//Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-//Route::post('login', [AuthController::class, 'login']);
-//Route::get('admin/dashboard', function () {
-//    return view('admin.dashboard'); // Halaman dashboard admin
-//})->middleware('auth')->name('admin.dashboard');
-
-//Route::get('/', function () {
-//    return view('login.index', ['title' => 'Login']);
-//})->name('login');
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 Route::get('/', function () {
     return redirect()->route('login');  // Redirect langsung ke halaman login
@@ -27,14 +17,18 @@ Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate']);
 
 //Route::get('/', function () {
-//    return redirect()->route('login');
+    //return redirect()->route('dashboard');
 //});
 
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+// AJAX Routes untuk dropdown dinamis - LETAKKAN DI ATAS SEBELUM RESOURCE ROUTES
+Route::get('/getProdi', [JurnalController::class, 'getProdi'])->name('getProdi');
+Route::get('/getSemester', [JurnalController::class, 'getSemester'])->name('getSemester');
+Route::get('/getMataKuliah', [JurnalController::class, 'getMataKuliah'])->name('getMataKuliah');
 
-// Jurnal
+// Jurnal Routes
 Route::get('/jurnal', [JurnalController::class, 'index'])->name('jurnal.index');
 Route::get('/jurnal/create', [JurnalController::class, 'create'])->name('jurnal.create');
 Route::post('/jurnal', [JurnalController::class, 'store'])->name('jurnal.store');
@@ -42,15 +36,12 @@ Route::get('/jurnal/{jurnal}', [JurnalController::class, 'show'])->name('jurnal.
 Route::get('/jurnal/{jurnal}/edit', [JurnalController::class, 'edit'])->name('jurnal.edit');
 Route::put('/jurnal/{jurnal}', [JurnalController::class, 'update'])->name('jurnal.update');
 Route::delete('/jurnal/{jurnal}', [JurnalController::class, 'destroy'])->name('jurnal.destroy');
+Route::get('/jurnal/{jurnal}/download', [JurnalController::class, 'download'])->name('jurnal.download');
 
-// Referensi
-Route::get('/referensi', [ReferensiController::class, 'index'])->name('referensi.index');
-Route::get('/referensi/create', [ReferensiController::class, 'create'])->name('referensi.create');
-Route::post('/referensi', [ReferensiController::class, 'store'])->name('referensi.store');
-Route::get('/referensi/{referensi}', [ReferensiController::class, 'show'])->name('referensi.show');
-Route::get('/referensi/{referensi}/edit', [ReferensiController::class, 'edit'])->name('referensi.edit');
-Route::put('/referensi/{referensi}', [ReferensiController::class, 'update'])->name('referensi.update');
-Route::delete('/referensi/{referensi}', [ReferensiController::class, 'destroy'])->name('referensi.destroy');
+// Referensi - PERBAIKAN ROUTES
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::post('/jurnal/bulk-edit', [HomeController::class, 'bulkEdit'])->name('jurnal.bulk-edit');
+Route::post('/jurnal/bulk-update', [HomeController::class, 'bulkUpdate'])->name('jurnal.bulk-update');
 
 // Profil
 Route::get('/profil', [ProfilController::class, 'index'])->name('profil.index');
