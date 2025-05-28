@@ -21,7 +21,7 @@ class JurnalController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi input sesuai dengan form dan migration
+        // Validasi input sesuai dengan form
         $validated = $request->validate([
             'tipe_referensi' => 'required|max:255',
             'departemen' => 'required|max:255',
