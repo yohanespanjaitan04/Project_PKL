@@ -171,20 +171,26 @@ class JurnalController extends Controller
             $departemen = $request->get('departemen');
             
             $prodi_data = [
-                'Informatika' => [
-                    'Teknik Informatika',
-                    'Sistem Informasi',
-                    'Teknik Komputer'
+                'Fakultas Sains dan Matematika' => [
+                    'Informatika',
+                    'Fisika',
+                    'Kimia',
+                    'Biologi',
+                    'Statistika'
                 ],
-                'Elektro' => [
+                'Fakultas Teknik' => [
                     'Teknik Elektro',
-                    'Teknik Telekomunikasi',
-                    'Teknik Elektronika'
-                ],
-                'Sipil' => [
                     'Teknik Sipil',
-                    'Teknik Lingkungan',
-                    'Teknik Arsitektur'
+                    'Teknik Mesin',
+                    'Teknik Arsitektur',
+                    'Teknik Industri'
+                ],
+                'Fakultas Ekonomi dan Bisnis' => [
+                    'Etika Bisnis',
+                    'Manajemen Resiko',
+                    'Manajemen Sumber Daya Manusia',
+                    'Akuntansi Manajemen',
+                    'Manajemen Pemasaran'
                 ]
             ];
             
@@ -214,11 +220,37 @@ class JurnalController extends Controller
         
         // Data mata kuliah (sama seperti sebelumnya)
         $mata_kuliah_data = [
-            'Teknik Informatika' => [
-                1 => ['Matematika Dasar', 'Algoritma Pemrograman', 'Pengantar TI'],
-                2 => ['Struktur Data', 'Basis Data', 'Pemrograman Web'],
+            'Informatika' => [
+                1 => ['Matematika Dasar', 'Dasar Sistem', 'Logika Informatika', 'Strukrut Diskrit'],
+                2 => ['Statistika', 'Algoritma Pemograman', 'Organisasi Arsitektur Komputer', 'Aljabar Linear'],
+                3 => ['Basis Data', 'Struktur Data', 'Sistem Operasi', 'Interaksi Manusia Komputer'],
+                4 => ['Pemrograman Berorientasi Objek', 'Jaringan Komputer', 'Manajemen Basis Data', 'Rekayasa Perangkat Lunak'],
+                5 => ['Analisis dan Strategi Algoritma', 'Pengembangan Berbasis Platform', 'Komputasi Tesebar Paralel', 'Sistem Cerdas'],
+                6 => ['Sistem Informasi', 'Proyek Perangkat Lunak', 'Uji Perangkat Lunak', 'Masyarakat dan Etika Profesi'],
+                7 => ['Metode Perangkat Lunak', 'Machine Learning'],
+                8 => ['Metodologi dan Penulisan Ilmia', 'Tugas Akhir']
                 // ... dst
             ],
+            'Fisika' => [
+                1 => ['Praktikum Fisika Dasar', 'Fisika Dasar I', 'Kalkulus dan Vektor', 'Metode Pengukuran Fisis'],
+                2 => ['Termodinamika', 'Praktikum Fisika Dasar II', 'Gelombang', 'Fisika Dasar II'],
+                3 => ['Elektronika Dasar', 'Elektromagnetika', 'Fisika Modern', 'Mekanika'],
+                4 => ['Fisika Statistik', 'Fisika Matematika III', 'Instrumentasi', 'Optika Modern'],
+                5 => ['Simulasi dan Pemodelan', 'Fisika Zat Padat', 'Fisika Nuklir', 'Standarisasi'],
+                6 => ['Metode Pengolahan Data', 'Kewirausahaan'],
+                7 => ['Kuliah Kerja Nyata'],
+                8 => ['Skripsi']
+            ],
+            'Kimia' => [
+                1 => ['Experimental in General Chemistry 1', 'General Chemistry 1', 'Chemistry of Elements', 'Management of Chemical Information'],
+                2 => ['Experimental in General Chemistry 2', 'General Physics 1', 'Inorganic Chemistry 1', 'Basics of Biological Chemistry'],
+                3 => ['Experimental in Analytical Chemistry', 'Chemical Structure and Bonding', 'General Mathematics 2	', 'Organic Chemistry 2'],
+                4 => ['Organic Chemistry 3', 'Inorganic Chemistry 3', 'Instrumental Analytical Chemistry 1', '	Chemical Spectroscopy'],
+                5 => ['Experimental in Biochemistry', 'Organic Analysis', 'Organic Synthesis', 'Chemistry 4'],
+                6 => ['Advance Experimental in Chemistry 1', 'Reaction Dynamics', 'Research Design', 'Field Work Practice'],
+                7 => ['Research Project 1: Chemical Experimentation', 'Real Work Lecture', 'Entrepreneurship'],
+                8 => ['Research Project 2: Thesis']
+            ]
             // ... data lainnya
         ];
         
