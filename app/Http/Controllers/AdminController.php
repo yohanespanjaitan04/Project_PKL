@@ -38,7 +38,7 @@ class AdminController extends Controller
             ));
             
         } catch (\Exception $e) {
-            return view('admin.dashboard')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return view('admin.UserManajemen.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
