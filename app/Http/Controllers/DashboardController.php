@@ -11,8 +11,12 @@ class DashboardController extends Controller
     public function index()
     {
         try {
-            // Get basic statistics
-            $totalJurnal = Jurnal::count();
+            // Get total counts from jurnals table based on tipe_referensi
+            $totalJurnal = Jurnal::where('tipe_referensi', 'jurnal')->count();
+            $totalBuku = Jurnal::where('tipe_referensi', 'buku')->count();
+            $totalArtikel = Jurnal::where('tipe_referensi', 'artikel')->count();
+            
+            // Get recent journals for history
             $jurnalTerbaru = Jurnal::orderBy('created_at', 'desc')->take(5)->get();
             
             // Get statistics by department
@@ -37,6 +41,8 @@ class DashboardController extends Controller
 
             return view('dashboard', compact(
                 'totalJurnal',
+                'totalBuku',
+                'totalArtikel',
                 'jurnalTerbaru',
                 'statsByDepartment',
                 'statsByType',
@@ -47,11 +53,13 @@ class DashboardController extends Controller
             // If there's an error, return with default values
             return view('dashboard', [
                 'totalJurnal' => 0,
+                'totalBuku' => 0,
+                'totalArtikel' => 0,
                 'jurnalTerbaru' => collect(),
                 'statsByDepartment' => collect(),
                 'statsByType' => collect(),
                 'monthlyStats' => collect()
-            ])->with('error', 'Terjadi kesalahan saat memuat dashboard.');
+            ])->with('error', 'Terjadi kesalahan saat memuat dashboard: ' . $e->getMessage());
         }
     }
 }

@@ -2,31 +2,33 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
+        'nim',
+        'nip',
+        'prodi',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -44,5 +46,42 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if user is dosen
+     */
+    public function isDosen()
+    {
+        return $this->role === 'dosen';
+    }
+
+    /**
+     * Check if user is mahasiswa
+     */
+    public function isMahasiswa()
+    {
+        return $this->role === 'mahasiswa';
+    }
+
+    /**
+     * Get role display name
+     */
+    public function getRoleDisplayName()
+    {
+        return match($this->role) {
+            'admin' => 'Administrator',
+            'dosen' => 'Dosen',
+            'mahasiswa' => 'Mahasiswa',
+            default => 'User'
+        };
     }
 }

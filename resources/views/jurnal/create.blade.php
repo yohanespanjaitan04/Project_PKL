@@ -25,9 +25,9 @@
                 <label for="departemen">Departemen</label>
                 <select name="departemen" id="departemen" style="width: 100%; padding: 8px;" required>
                     <option value="">-- Pilih Departemen --</option>
-                    <option value="Informatika">Informatika</option>
-                    <option value="Elektro">Elektro</option>
-                    <option value="Sipil">Sipil</option>
+                    <option value="Fakultas Sains dan Matematika">Fakultas Sains dan Matematika</option>
+                    <option value="Fakultas Teknik">Fakultas Teknik</option>
+                    <option value="Fakultas Ekonomi dan Bisnis">Fakultas Ekonomi dan Bisnis</option>
                 </select>
             </div>
 

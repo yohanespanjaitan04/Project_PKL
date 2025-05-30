@@ -8,7 +8,7 @@
     <link rel="icon" href="{{ asset('Undip_favicon.ico') }}" type="image/x-icon">
 
 
-
+    
 </head>
 <body>
     <div class="sidebar">
@@ -30,15 +30,21 @@
             <div>{{ $user['nama'] ?? 'Rayyis Budi' }}</div>
         </div>
         <ul class="nav-menu">
+            @if (auth()->user()->role == "mahasiswa")
             <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <a href="{{ route('dashboard') }}">Dashboard</a>
             </li>
+            @endif
+            @if (auth()->user()->role == "admin, dosen")
             <li class="{{ request()->routeIs('jurnal.*') ? 'active' : '' }}">
                 <a href="{{ route('jurnal.index') }}">Jurnal Saya</a>
             </li>
+            @endif
+             @if (auth()->user()->role == "admin, dosen")
             <li class="{{ request()->routeIs('jurnal.create') ? 'active' : '' }}">
                 <a href="{{ route('jurnal.create') }}">Jurnal Baru</a>
             </li>
+            @endif
             <li class="{{ request()->routeIs('home.*') ? 'active' : '' }}">
                 <a href="{{ route('home') }}">Home</a>
             </li>
