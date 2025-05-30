@@ -11,12 +11,12 @@ class JurnalController extends Controller
     public function index()
     {
         $jurnals = Jurnal::paginate(10);
-        return view('jurnal.index', compact('jurnals'));
+        return view('dosen.jurnal.index', compact('jurnals'));
     }
 
     public function create()
     {
-        return view('jurnal.create');
+        return view('dosen.jurnal.create');
     }
 
     public function store(Request $request)
