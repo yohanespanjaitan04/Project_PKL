@@ -4,9 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserManajemenController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -51,9 +52,13 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/users', [AdminController::class, 'users'])->name('users');
-    Route::get('/jurnals', [AdminController::class, 'manageJurnals'])->name('jurnals');
+    Route::get('/admin/user', [UserManajemenController::class, 'index'])->name('admin.user.index');
+    Route::get('/users', [UserManajemenController::class, 'users'])->name('users');
+    Route::get('/jurnals', [UserManajemenController::class, 'manageJurnals'])->name('jurnals');
+    
+    // Tambahkan route UserManajemen di sini
+    Route::resource('UserManajemen', UserManajemenController::class);
+    Route::post('/user-manajemen', [UserManajemenController::class, 'store'])->name('User_manajemen.store');
 });
 
 /*
