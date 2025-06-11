@@ -63,23 +63,30 @@ Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':admin'])
 
 /*
 |--------------------------------------------------------------------------
-| Dosen Routes
+| Dosen Routes - DENGAN FITUR EDIT
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':dosen,admin'])->prefix('dosen')->name('dosen.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('jurnal', JurnalController::class);
+    
+    // Route khusus untuk dosen home dengan fitur edit
+    Route::get('/home', [HomeController::class, 'dosenHome'])->name('home');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Mahasiswa Routes
+| Mahasiswa Routes - HANYA VIEW
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':mahasiswa,dosen,admin'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/jurnal', [JurnalController::class, 'index'])->name('jurnal.index');
     Route::get('/jurnal/{id}', [JurnalController::class, 'show'])->name('jurnal.show');
+    Route::get('/jurnal/{jurnal}/download', [JurnalController::class, 'download'])->name('jurnal.download');
+    
+    // Route khusus untuk mahasiswa home tanpa fitur edit
+    Route::get('/home', [HomeController::class, 'mahasiswaHome'])->name('home');
 });
 
 /*
@@ -107,8 +114,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/jurnal/{jurnal}', [JurnalController::class, 'destroy'])->name('jurnal.destroy');
     Route::get('/jurnal/{jurnal}/download', [JurnalController::class, 'download'])->name('jurnal.download');
     
-    // Home controller routes
+    // Home controller routes - GENERAL (dengan logic role-based di controller)
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    
+    // Bulk edit routes - HANYA UNTUK DOSEN DAN ADMIN (authorization di controller)
     Route::post('/jurnal/bulk-edit', [HomeController::class, 'bulkEdit'])->name('jurnal.bulk-edit');
     Route::post('/jurnal/bulk-update', [HomeController::class, 'bulkUpdate'])->name('jurnal.bulk-update');
 });

@@ -29,29 +29,42 @@
             </svg>
             <div>{{ $user['nama'] ?? 'Rayyis Budi' }}</div>
         </div>
-        <ul class="nav-menu">
-            @if (auth()->user()->role == "mahasiswa")
-            <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <a href="{{ route('dashboard') }}">Dashboard</a>
-            </li>
-            @endif
-            @if (auth()->user()->role == "admin, dosen")
+            <ul class="nav-menu">
+        {{-- Dashboard untuk semua --}}
+        <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <a href="{{ route('dashboard') }}">Dashboard</a>
+        </li>
+
+        {{-- Jurnal hanya untuk dosen dan admin --}}
+        @if (auth()->user()->role == 'dosen' || auth()->user()->role == 'admin')
             <li class="{{ request()->routeIs('jurnal.*') ? 'active' : '' }}">
                 <a href="{{ route('jurnal.index') }}">Jurnal Saya</a>
             </li>
-            @endif
-             @if (auth()->user()->role == "admin, dosen")
             <li class="{{ request()->routeIs('jurnal.create') ? 'active' : '' }}">
                 <a href="{{ route('jurnal.create') }}">Jurnal Baru</a>
             </li>
-            @endif
-            <li class="{{ request()->routeIs('home.*') ? 'active' : '' }}">
-                <a href="{{ route('home') }}">Home</a>
-            </li>
-            <li class="{{ request()->routeIs('profil.*') ? 'active' : '' }}">
-                <a href="{{ route('profil.edit') }}">Profil</a>
-            </li>
-        </ul>
+        @endif
+
+        {{-- Home untuk semua --}}
+        <li class="{{ request()->routeIs('home') ? 'active' : '' }}">
+            <a href="{{ route('home') }}">Home</a>
+        </li>
+
+        {{-- Profil untuk semua --}}
+        <li class="{{ request()->routeIs('profil.*') ? 'active' : '' }}">
+            <a href="{{ route('profil.edit') }}">Profil</a>
+        </li>
+        {{-- Logout untuk semua --}}
+        <li>
+        <form action="{{ route('logout') }}" method="POST" style="margin: 0; padding: 0;">
+            @csrf
+            <button type="submit" style="background: none; border: none; color: inherit; padding: 12px 15px; width: 100%; text-align: left; cursor: pointer; border-radius: 5px; transition: background 0.3s;">
+                Logout
+            </button>
+        </form>
+        </li>
+    </ul>
+
     </div>
 
     <div class="main-content">

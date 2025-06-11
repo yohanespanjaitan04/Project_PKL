@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Jurnal;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -44,7 +45,16 @@ class HomeController extends Controller
             $total_jurnal = Jurnal::count();
             $jurnal_tahun_ini = Jurnal::whereYear('tahun_publikasi', date('Y'))->count();
 
-            return view('home.home', compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'));
+            // Cek role user untuk menentukan view yang akan digunakan
+            $user = Auth::user();
+            
+            if ($user->role === 'mahasiswa') {
+                // Untuk mahasiswa, gunakan view tanpa fitur edit
+                return view('mahasiswa.home', compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'));
+            } else {
+                // Untuk dosen dan admin, gunakan view dengan fitur edit
+                return view('dosen.home.home', compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'));
+            }
 
         } catch (\Exception $e) {
             // Log error untuk debugging
@@ -56,7 +66,10 @@ class HomeController extends Controller
                 $total_jurnal = Jurnal::count();
                 $jurnal_tahun_ini = 0;
                 
-                return view('home', compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'))
+                $user = Auth::user();
+                $viewName = ($user->role === 'mahasiswa') ? 'mahasiswa.home' : 'dosen.home.home';
+                
+                return view($viewName, compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'))
                     ->with('error', 'Terjadi kesalahan dalam memuat filter, menampilkan semua data.');
             } catch (\Exception $e2) {
                 // Jika masih error, tampilkan halaman kosong
@@ -64,15 +77,114 @@ class HomeController extends Controller
                 $total_jurnal = 0;
                 $jurnal_tahun_ini = 0;
 
-                return view('home', compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'))
+                $user = Auth::user();
+                $viewName = ($user->role === 'mahasiswa') ? 'mahasiswa.home' : 'dosen.home.home';
+
+                return view($viewName, compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'))
                     ->with('error', 'Terjadi kesalahan dalam memuat data jurnal: ' . $e2->getMessage());
             }
         }
     }
 
-    // Method baru untuk menangani bulk edit - PERBAIKAN DI SINI
+    // Method khusus untuk mahasiswa (view only)
+    public function mahasiswaHome(Request $request)
+    {
+        try {
+            // Query dasar untuk jurnal
+            $query = Jurnal::query();
+
+            // Filter berdasarkan departemen
+            if ($request->filled('departemen')) {
+                $query->where('departemen', $request->departemen);
+            }
+
+            // Filter berdasarkan program studi
+            if ($request->filled('program_studi')) {
+                $query->where('prodi', $request->program_studi);
+            }
+
+            // Filter berdasarkan kata kunci
+            if ($request->filled('kata_kunci')) {
+                $kata_kunci = $request->kata_kunci;
+                $query->where(function($q) use ($kata_kunci) {
+                    $q->where('judul', 'like', '%' . $kata_kunci . '%')
+                      ->orWhere('pengarang', 'like', '%' . $kata_kunci . '%')
+                      ->orWhere('abstrak', 'like', '%' . $kata_kunci . '%');
+                });
+            }
+
+            $query->orderBy('tahun_publikasi', 'desc')->orderBy('created_at', 'desc');
+            $jurnals = $query->paginate(10);
+            $total_jurnal = Jurnal::count();
+            $jurnal_tahun_ini = Jurnal::whereYear('tahun_publikasi', date('Y'))->count();
+
+            return view('mahasiswa.home', compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'));
+
+        } catch (\Exception $e) {
+            \Log::error('Error in mahasiswa home: ' . $e->getMessage());
+            $jurnals = collect()->paginate(10);
+            $total_jurnal = 0;
+            $jurnal_tahun_ini = 0;
+
+            return view('mahasiswa.home', compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'))
+                ->with('error', 'Terjadi kesalahan dalam memuat data jurnal.');
+        }
+    }
+
+    // Method khusus untuk dosen (dengan fitur edit)
+    public function dosenHome(Request $request)
+    {
+        try {
+            // Query dasar untuk jurnal
+            $query = Jurnal::query();
+
+            // Filter berdasarkan departemen
+            if ($request->filled('departemen')) {
+                $query->where('departemen', $request->departemen);
+            }
+
+            // Filter berdasarkan program studi
+            if ($request->filled('program_studi')) {
+                $query->where('prodi', $request->program_studi);
+            }
+
+            // Filter berdasarkan kata kunci
+            if ($request->filled('kata_kunci')) {
+                $kata_kunci = $request->kata_kunci;
+                $query->where(function($q) use ($kata_kunci) {
+                    $q->where('judul', 'like', '%' . $kata_kunci . '%')
+                      ->orWhere('pengarang', 'like', '%' . $kata_kunci . '%')
+                      ->orWhere('abstrak', 'like', '%' . $kata_kunci . '%');
+                });
+            }
+
+            $query->orderBy('tahun_publikasi', 'desc')->orderBy('created_at', 'desc');
+            $jurnals = $query->paginate(10);
+            $total_jurnal = Jurnal::count();
+            $jurnal_tahun_ini = Jurnal::whereYear('tahun_publikasi', date('Y'))->count();
+
+            return view('dosen.home.home', compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'));
+
+        } catch (\Exception $e) {
+            \Log::error('Error in dosen home: ' . $e->getMessage());
+            $jurnals = collect()->paginate(10);
+            $total_jurnal = 0;
+            $jurnal_tahun_ini = 0;
+
+            return view('dosen.home.home', compact('jurnals', 'total_jurnal', 'jurnal_tahun_ini'))
+                ->with('error', 'Terjadi kesalahan dalam memuat data jurnal.');
+        }
+    }
+
+    // Method baru untuk menangani bulk edit - HANYA UNTUK DOSEN DAN ADMIN
     public function bulkEdit(Request $request)
     {
+        // Cek authorization
+        $user = Auth::user();
+        if ($user->role === 'mahasiswa') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengedit jurnal.');
+        }
+
         try {
             // Validasi input - ubah dari selected_ids ke jurnal_ids
             $request->validate([
@@ -103,9 +215,15 @@ class HomeController extends Controller
         }
     }
 
-    // Method untuk memproses update bulk edit
+    // Method untuk memproses update bulk edit - HANYA UNTUK DOSEN DAN ADMIN
     public function bulkUpdate(Request $request)
     {
+        // Cek authorization
+        $user = Auth::user();
+        if ($user->role === 'mahasiswa') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengedit jurnal.');
+        }
+
         try {
             // Validasi basic - PERBAIKAN: ubah validasi untuk menerima format yang benar
             $request->validate([
