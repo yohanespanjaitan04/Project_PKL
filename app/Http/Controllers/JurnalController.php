@@ -71,7 +71,7 @@ class JurnalController extends Controller
     // Method untuk menampilkan detail jurnal
     public function show(Jurnal $jurnal)
     {
-        return view('jurnal.show', compact('jurnal'));
+        return view('dosen.jurnal.show', compact('jurnal'));
     }
 
     // Method untuk menampilkan form edit
