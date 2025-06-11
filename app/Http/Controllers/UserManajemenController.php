@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User_Manajemen;
+// use App\Models\User_Manajemen;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 
 class UserManajemenController extends Controller
 {
@@ -12,9 +15,9 @@ class UserManajemenController extends Controller
      */
     public function index()
     {
-        //
-        $User_Manajemen = []; // Mengambil semua data user dari database
-        return view('admin.UserManajemen.index', compact('User_Manajemen')); // Menampilkan view dengan data users
+        // Gunakan model User
+        $users = User::latest()->paginate(10); 
+        return view('admin.UserManajemen.index', compact('users'));
     }
 
     /**
@@ -35,70 +38,82 @@ class UserManajemenController extends Controller
         // Validasi data input
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:user_manajemen,email',
+            'email' => 'required|email|unique:users,email',
             'role' => 'required|string|max:100',
             'department' => 'required|string|max:100',
+            'password' => 'required|string|max:10',
         ]);
 
-        // Menyimpan data user
-        User_Manajemen::create($validatedData);
+       $validatedData['password'] = Hash::make($validatedData['password']); // GANTI DISINI
 
-        // Redirect ke halaman daftar user
+        \App\Models\User::create($validatedData); // pastikan kamu pakai model yg benar
+
         return redirect()->route('admin.UserManajemen.index')->with('success', 'User berhasil ditambahkan');
-
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User_Manajemen $user_Manajemen)
+    public function show($id)
     {
-        //
-        return view('admin.UserManajemen.show', compact('user_Manajemen')); // Menampilkan detail user
+        // 2. Cari user menggunakan model `User` dan `findOrFail`
+        // `findOrFail` akan otomatis menampilkan halaman 404 jika user tidak ditemukan
+        $user = User::findOrFail($id);
+
+        // 3. Kirim variabel tunggal `$user` ke view, bukan `$users`
+        return view('admin.UserManajemen.show', compact('user')); 
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User_Manajemen $user_Manajemen)
+    public function edit($id)
     {
-        //
-        return view('admin.UserManajemen.edit', compact('user_Manajemen'));
+        // 2. Cari user menggunakan model `User` dan `findOrFail`
+        $user = User::findOrFail($id);
+
+        // 3. Kirim variabel tunggal `$user` ke view, bukan `$users`
+        return view('admin.UserManajemen.edit', compact('user'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User_Manajemen $user_Manajemen)
+ 
+    // Ganti signature method untuk menerima $id mentah, bukan model.
+    // 2. UBAH TIPE PARAMETER DI METHOD UPDATE DAN LAINNYA
+    public function update(Request $request, $id) 
     {
-        // Validasi data input
+        // Cari user menggunakan model User
+        $user = User::findOrFail($id);
+
+        // ... sisa logika update Anda (yang sudah benar) tetap sama ...
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:user_manajemen,email,' . $user_Manajemen->id,
+            'email' => 'required|email|unique:users,email,' . $id, 
             'role' => 'required|string|max:100',
             'department' => 'required|string|max:100',
+            'password' => 'nullable|string|max:10', 
         ]);
 
-        // Menemukan user berdasarkan ID
-        $user = UserManajemen::findOrFail($id);
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+        $user->role = $validatedData['role'];
+        $user->department = $validatedData['department'];
 
-        // Memperbarui data user
-        $user->update($validatedData);
-
-        // Redirect ke halaman daftar user
-        return redirect()->route('admin.UseManajemen.index')->with('success', 'User berhasil diperbarui');
+        if ($request->filled('password')) {
+            $user->password = Hash::make($validatedData['password']);
+        }
+        
+        $user->save();
+        
+        return redirect()->route('admin.UserManajemen.index')->with('success', 'Data user berhasil diperbarui!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User_Manajemen $user_Manajemen)
+    public function destroy($id)
     {
-
-        // Menghapus user
+        $user = User::findOrFail($id);
         $user->delete();
-
-        // Redirect ke halaman daftar user
-        return redirect()->route('admin.UserManajemen.index')->with('success', 'User berhasil diperbarui');
+        return redirect()->route('admin.UserManajemen.index')->with('success', 'User berhasil dihapus');
     }
 }
