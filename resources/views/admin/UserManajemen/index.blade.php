@@ -480,6 +480,10 @@
                 <div class="nav-icon">👥</div>
                 User Manajemen
             </div>
+            <div class="nav-item active" onclick="showTambahJurnal()">
+                <div class="nav-icon">👥</div>
+                Tambah Jurnal
+            </div>
             <div class="nav-item" onclick="showProfile()">
                 <div class="nav-icon">👤</div>
                 Profil

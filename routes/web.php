@@ -59,6 +59,17 @@ Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':admin'])
     // Tambahkan route UserManajemen di sini
     Route::resource('UserManajemen', UserManajemenController::class);
     Route::post('/User_manajemen', [UserManajemenController::class, 'store'])->name('User_manajemen.store');
+    
+    // [BARU] Tambahkan route resource untuk Jurnal di sini
+    // Baris ini akan secara otomatis membuat route untuk:
+    // - admin.jurnals.index   (GET /admin/jurnals)
+    // - admin.jurnals.create   (GET /admin/jurnals/create)  <-- Halaman form tambah
+    // - admin.jurnals.store    (POST /admin/jurnals)         <-- Proses simpan data
+    // - admin.jurnals.show     (GET /admin/jurnals/{jurnal})
+    // - admin.jurnals.edit     (GET /admin/jurnals/{jurnal}/edit)
+    // - admin.jurnals.update   (PUT/PATCH /admin/jurnals/{jurnal})
+    // - admin.jurnals.destroy  (DELETE /admin/jurnals/{jurnal})
+    Route::resource('jurnal', JurnalController::class);
 });
 
 /*
