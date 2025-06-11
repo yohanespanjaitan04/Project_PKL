@@ -372,11 +372,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="phone">Nomor Telepon</label>
-                        <input type="tel" name="phone" id="phone" placeholder="Masukkan nomor telepon">
-                    </div>
-
-                    <div class="form-group">
                         <label for="password">Password <span class="required">*</span></label>
                         <input type="password" name="password" id="password" placeholder="Masukkan password" required>
                     </div>

@@ -58,7 +58,7 @@ Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':admin'])
     
     // Tambahkan route UserManajemen di sini
     Route::resource('UserManajemen', UserManajemenController::class);
-    Route::post('/user-manajemen', [UserManajemenController::class, 'store'])->name('User_manajemen.store');
+    Route::post('/User_manajemen', [UserManajemenController::class, 'store'])->name('User_manajemen.store');
 });
 
 /*

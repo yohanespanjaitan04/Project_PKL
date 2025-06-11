@@ -326,6 +326,134 @@
                 min-width: 700px;
             }
         }
+        /* Styling untuk kontainer tombol agar sejajar */
+        .aksi-buttons {
+            display: flex; /* Mengaktifkan Flexbox */
+            align-items: center; /* Membuat semua item sejajar secara vertikal di tengah */
+            gap: 6px; /* Memberi jarak antar tombol */
+        }
+
+        /* Menghilangkan margin default dari form di dalam flex container */
+        .aksi-buttons form {
+            margin: 0;
+        }
+
+        /* Style dasar untuk SEMUA tombol aksi (Detail, Edit, Hapus) */
+        .btn-aksi {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 5px; /* Membuat sudut tombol sedikit melengkung */
+            text-decoration: none; /* Menghilangkan garis bawah pada link */
+            color: white; /* Warna teks putih */
+            font-size: 13px;
+            font-weight: 500;
+            border: none; /* Menghilangkan border default pada tombol 'Hapus' */
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease-in-out; /* Animasi halus saat di-hover */
+        }
+
+        /* Warna spesifik untuk setiap tombol */
+        .btn-edit   { background-color: #f39c12; } /* Oranye */
+        .btn-hapus  { background-color: #e74c3c; } /* Merah */
+
+        /* Efek hover untuk setiap tombol (sedikit lebih gelap) */
+        .btn-aksi:hover {
+            transform: translateY(-1px); /* Sedikit terangkat saat di-hover */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        .btn-edit:hover   { background-color: #d35400; }
+        .btn-hapus:hover  { background-color: #c0392b; }
+        /* CSS untuk Modal Konfirmasi Hapus */
+        .fixed { position: fixed; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .bg-gray-600 { background-color: #4a5568; } /* Ganti dengan warna yang sesuai jika perlu */
+        .bg-opacity-50 { background-color: rgba(74, 85, 104, 0.5); }
+        .overflow-y-auto { overflow-y: auto; }
+        .h-full { height: 100%; }
+        .w-full { width: 100%; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+
+        .relative { position: relative; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .p-5 { padding: 1.25rem; }
+        .border { border-width: 1px; }
+        .max-w-md { max-width: 28rem; }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .rounded-md { border-radius: 0.375rem; }
+        .bg-white { background-color: #ffffff; }
+
+        .mt-3 { margin-top: 0.75rem; }
+        .text-center { text-align: center; }
+        .h-12 { height: 3rem; }
+        .w-12 { width: 3rem; }
+        .rounded-full { border-radius: 9999px; }
+        .bg-red-100 { background-color: #fee2e2; }
+        .text-red-600 { color: #dc2626; }
+
+        .text-lg { font-size: 1.125rem; }
+        .leading-6 { line-height: 1.5rem; }
+        .font-medium { font-weight: 500; }
+        .text-gray-900 { color: #111827; }
+        .mt-4 { margin-top: 1rem; }
+
+        .mt-2 { margin-top: 0.5rem; }
+        .px-7 { padding-left: 1.75rem; padding-right: 1.75rem; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-gray-500 { color: #6b7280; }
+        .font-bold { font-weight: 700; }
+
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .bg-gray-200 { background-color: #e5e7eb; }
+        .text-gray-800 { color: #1f2937; }
+        .hover\:bg-gray-300:hover { background-color: #d1d5db; }
+        .bg-red-600 { background-color: #dc2626; }
+        .hover\:bg-red-700:hover { background-color: #b91c1c; }
+        .text-white { color: #ffffff; }
+        .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+
+        /* Menyesuaikan Tombol Hapus Asli */
+        .btn-hapus-modal {
+            background-color: #e74c3c; /* Merah */
+        }
+        .btn-hapus-modal:hover {
+            background-color: #c0392b;
+        }
+        /* [BARU] CSS Tambahan untuk Form di Modal Edit */
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        .bg-blue-100 { background-color: #dbeafe; }
+        .text-blue-600 { color: #2563eb; }
+        .bg-blue-600 { background-color: #2563eb; }
+        .hover\:bg-blue-700:hover { background-color: #1d4ed8; }
     </style>
 </head>
 <body>
@@ -379,8 +507,49 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <!-- Data will be populated here -->
+                <<tbody>
+                    {{-- Gunakan @forelse untuk handle jika data kosong --}}
+                    @forelse ($users as $key => $user)
+                        <tr>
+                            {{-- Penomoran yang benar untuk pagination --}}
+                            <td>{{ $users->firstItem() + $key }}</td>
+                            <td>
+                                <strong>{{ $user->name }}</strong><br>
+                                <small>{{ $user->email }}</small>
+                            </td>
+                            <td>{{ $user->role }}</td>
+                            <td>{{ $user->department }}</td>
+                            <td class="kolom-aksi">
+                                <div class="aksi-buttons">
+                                    {{-- TOMBOL EDIT (MEMBUKA MODAL) --}}
+                                    <button type="button" 
+                                            class="btn-aksi btn-edit js-edit-btn"
+                                            data-id="{{ $user->id }}"
+                                            data-name="{{ $user->name }}"
+                                            data-email="{{ $user->email }}"
+                                            data-role="{{ $user->role }}"
+                                            data-department="{{ $user->department }}"
+                                            data-update-url="{{ route('admin.UserManajemen.update', $user->id) }}">
+                                        Edit
+                                    </button>
+                                    {{-- TOMBOL HAPUS (WAJIB PAKAI FORM) - DIMODIFIKASI --}}
+                                    <form action="{{ route('admin.UserManajemen.destroy', $user->id) }}" method="POST" data-user-name="{{ $user->name }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        {{-- Tombol ini sekarang memicu modal, bukan submit langsung --}}
+                                        <button type="button" class="btn-aksi btn-hapus btn-hapus-modal">Hapus</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        {{-- Tampilan jika tidak ada data user sama sekali --}}
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                Tidak ada data user.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -392,45 +561,189 @@
             <button class="pagination-btn">3</button>
             <button class="pagination-btn">›</button>
         </div>
+        <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none; z-index: 2000;">
+        <div class="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
+                     <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 text-center mt-4">Edit User</h3>
+                
+                <form id="editUserForm" method="POST" action="" class="mt-4 px-2">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="form-group">
+                        <label for="editName" class="form-label">Nama</label>
+                        <input type="text" id="editName" name="name" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" id="editEmail" name="email" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editRole" class="form-label">Role</label>
+                        <select id="editRole" name="role" class="form-select" required>
+                            <option value="Dosen">Dosen</option>
+                            <option value="Mahasiswa">Mahasiswa</option>
+                            <option value="Admin">Admin</option>    
+                            {{-- Tambahkan role lain jika ada --}}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editDepartment" class="form-label">Department</label>
+                        <input type="text" id="editDepartment" name="department" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editPassword" class="form-label">Password (Opsional)</label>
+                        <input type="password" id="editPassword" name="password" class="form-input" placeholder="Isi hanya jika ingin mengubah password">
+                    </div>
+
+                    <div class="items-center px-4 py-3 flex justify-center gap-4">
+                        <button id="cancelEditModalBtn" type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none">
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Navigation functionality
-        function showDashboard() {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.target.closest('.nav-item').classList.add('active');
-            console.log('Dashboard clicked');
-        }
+    document.addEventListener('DOMContentLoaded', function() {
 
-        function showUserManagement() {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.target.closest('.nav-item').classList.add('active');
-            console.log('User Management clicked');
-        }
+        // --- Logika untuk Modal Edit User ---
+        const editModal = document.getElementById('editModal');
+        const cancelEditBtn = document.getElementById('cancelEditModalBtn');
+        const editUserForm = document.getElementById('editUserForm');
+        const editButtons = document.querySelectorAll('.js-edit-btn');
+        
+        // Fungsi untuk membuka modal edit
+        const openEditModal = (button) => {
+            const updateUrl = button.dataset.updateUrl;
+            
+            // Set action form
+            editUserForm.action = updateUrl;
+            
+            // Isi field form dengan data dari tombol
+            document.getElementById('editName').value = button.dataset.name;
+            document.getElementById('editEmail').value = button.dataset.email;
+            document.getElementById('editRole').value = button.dataset.role;
+            document.getElementById('editDepartment').value = button.dataset.department;
+            document.getElementById('editPassword').value = ''; // Kosongkan password
+            
+            editModal.style.display = 'flex';
+        };
 
-        function showProfile() {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.target.closest('.nav-item').classList.add('active');
-            console.log('Profile clicked');
-        }
+        // Fungsi untuk menutup modal edit
+        const closeEditModal = () => {
+            editModal.style.display = 'none';
+        };
 
-        // Pagination functionality
-        document.querySelectorAll('.pagination-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (!this.disabled && !this.classList.contains('active')) {
-                    document.querySelectorAll('.pagination-btn').forEach(b => b.classList.remove('active'));
-                    
-                    if (this.textContent === '›') {
-                        console.log('Next page');
-                    } else if (this.textContent === '‹') {
-                        console.log('Previous page');
-                    } else {
-                        this.classList.add('active');
-                        console.log('Page', this.textContent);
-                    }
-                }
+        // Tambahkan event listener untuk semua tombol "Edit"
+        editButtons.forEach(button => {
+            button.addEventListener('click', () => openEditModal(button));
+        });
+
+        // Event listener untuk tombol "Batal" di modal edit
+        cancelEditBtn.addEventListener('click', closeEditModal);
+
+        // Tutup modal jika user mengklik di luar area konten modal
+        editModal.addEventListener('click', (event) => {
+            if (event.target === editModal) {
+                closeEditModal();
+            }
+        });
+
+
+        // --- Logika untuk Modal Konfirmasi Hapus ---
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelDeleteBtn = document.getElementById('cancelModalBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const modalUserName = document.getElementById('modalUserName');
+        const deleteButtons = document.querySelectorAll('.btn-hapus-modal');
+
+        let formToSubmit = null;
+
+        const openDeleteModal = (form) => {
+            formToSubmit = form;
+            const userName = form.dataset.userName;
+            modalUserName.textContent = userName;
+            deleteModal.style.display = 'flex';
+        };
+
+        const closeDeleteModal = () => {
+            formToSubmit = null;
+            deleteModal.style.display = 'none';
+        };
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const form = event.target.closest('form');
+                openDeleteModal(form);
             });
         });
+
+        cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (formToSubmit) {
+                formToSubmit.submit();
+            }
+        });
+        
+        deleteModal.addEventListener('click', (event) => {
+            if (event.target === deleteModal) {
+                closeDeleteModal();
+            }
+        });
+
+
+        // --- Logika Umum (misal: tombol Escape) ---
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                if (deleteModal.style.display === 'flex') {
+                    closeDeleteModal();
+                }
+                if (editModal.style.display === 'flex') {
+                    closeEditModal();
+                }
+            }
+        });
+    });
     </script>
+    
+    <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none; z-index: 2000;">
+        <div class="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                    <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Konfirmasi Hapus User</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500">
+                        Apakah Anda yakin ingin menghapus user <strong id="modalUserName" class="font-bold"></strong>? Tindakan ini tidak dapat dibatalkan.
+                    </p>
+                </div>
+                <div class="items-center px-4 py-3 flex justify-center gap-4">
+                    <button id="cancelModalBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                        Batal
+                    </button>
+                    <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Ya, Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

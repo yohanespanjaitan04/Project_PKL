@@ -23,6 +23,7 @@ class User extends Authenticatable
         'nim',
         'nip',
         'prodi',
+        'department',
     ];
 
     /**
