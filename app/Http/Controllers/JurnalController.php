@@ -8,10 +8,32 @@ use Illuminate\Support\Facades\Storage;
 
 class JurnalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jurnals = Jurnal::paginate(10);
-        return view('dosen.jurnal.index', compact('jurnals'));
+        // Cek apakah URL yang sedang diakses diawali dengan 'admin/'
+        if ($request->is('admin/*')) {
+            // --- INI LOGIKA UNTUK ADMIN ---
+
+            // Ambil semua data jurnal untuk ditampilkan ke admin
+            $jurnals = Jurnal::latest()->paginate(10); 
+            
+            // Tampilkan view index milik admin
+            // Pastikan file ini ada: resources/views/admin/TambahJurnal/index.blade.php
+            return view('admin.TambahJurnal.index', compact('jurnals'));
+        } 
+        
+        // Jika URL tidak diawali 'admin/', maka kita anggap itu untuk dosen atau role lain.
+        else {
+            // --- INI LOGIKA UNTUK DOSEN ---
+
+            // Ambil hanya jurnal yang dibuat oleh dosen yang sedang login
+            // Pastikan Anda memiliki kolom 'user_id' di tabel 'jurnals'
+            $jurnals = Jurnal::where('user_id', Auth::id())->latest()->paginate(10);
+            
+            // Tampilkan view index milik dosen
+            // Pastikan file ini ada: resources/views/dosen/jurnal/index.blade.php
+            return view('dosen.jurnal.index', compact('jurnals'));
+        }
     }
 
     public function create()
