@@ -278,10 +278,17 @@
                 Daftar Jurnal
             </a>
             {{-- Link ke form tambah jurnal, diberi kelas 'active' jika route saat ini adalah 'jurnal.create' --}}
-            <a href="{{ route('jurnal.create') }}" class="nav-item {{ request()->routeIs('jurnal.create') ? 'active' : '' }}">
-                <div class="nav-icon">➕</div>
-                Tambah Jurnal
-            </a>
+            @if(Auth::user()->role === 'admin')
+    <a href="{{ route('admin.jurnal.create') }}" class="nav-item {{ request()->routeIs('admin.jurnal.create') ? 'active' : '' }}">
+        <div class="nav-icon">➕</div>
+        Tambah Jurnal
+    </a>
+@else
+    <a href="{{ route('jurnal.create') }}" class="nav-item {{ request()->routeIs('jurnal.create') ? 'active' : '' }}">
+        <div class="nav-icon">➕</div>
+        Tambah Jurnal
+    </a>
+@endif
             <a href="#" class="nav-item">
                 <div class="nav-icon">👤</div>
                 Profil

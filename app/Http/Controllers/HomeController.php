@@ -207,7 +207,7 @@ class HomeController extends Controller
             }
 
             // Redirect ke halaman bulk edit dengan data yang dipilih
-            return view('home.bulk-edit', compact('selectedJurnals'));
+            return view('dosen.home.bulk-edit', compact('selectedJurnals'));
 
         } catch (\Exception $e) {
             \Log::error('Error in bulk edit: ' . $e->getMessage());
