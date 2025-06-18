@@ -454,6 +454,187 @@
         .text-blue-600 { color: #2563eb; }
         .bg-blue-600 { background-color: #2563eb; }
         .hover\:bg-blue-700:hover { background-color: #1d4ed8; }
+        .stat-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 30px; /* Memberi jarak ke bawah */
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card .icon-wrapper {
+        flex-shrink: 0;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+    
+    .stat-card .icon-users {
+        background-color: #e0e7ff; /* Biru muda */
+        color: #4338ca; /* Biru tua */
+    }
+    
+    .stat-card .icon-journals {
+        background-color: #d1fae5; /* Hijau muda */
+        color: #047857; /* Hijau tua */
+    }
+
+    .stat-card .info .stat-number {
+        font-size: 36px;
+        font-weight: 700;
+        color: #1f2937;
+        line-height: 1.1;
+    }
+
+    .stat-card .info .stat-label {
+        font-size: 16px;
+        color: #6b7280;
+        margin-top: 4px;
+    }
+
+    /* [BARU] Style untuk Quick Actions Card */
+    .quick-actions-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+    }
+
+    .quick-actions-card h3 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 16px;
+    }
+    
+    .quick-actions-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    
+    .quick-actions-buttons .action-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .action-link.user-management {
+        background-color: #4f46e5;
+        color: white;
+    }
+    .action-link.user-management:hover {
+        background-color: #4338ca;
+    }
+
+    .action-link.add-journal {
+        background-color: #10b981;
+        color: white;
+    }
+    .action-link.add-journal:hover {
+        background-color: #059669;
+    }
+        .profile-card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+        max-width: 700px; /* Lebar maksimum kartu profil */
+        margin: auto; /* Agar kartu berada di tengah */
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #e0e7ff;
+        color: #4338ca;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .profile-name {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .profile-email {
+        font-size: 16px;
+        color: #6b7280;
+    }
+
+    .profile-details .detail-item {
+        display: flex;
+        padding: 12px 0;
+        font-size: 16px;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .profile-details .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-item .label {
+        width: 150px; /* Lebar label yang tetap */
+        color: #6b7280;
+        flex-shrink: 0;
+    }
+
+    .detail-item .value {
+        color: #1f2937;
+        font-weight: 500;
+    }
+
+    .value.role-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 16px;
+        background-color: #f3f4f6;
+        color: #374151;
+        font-size: 14px;
+        text-transform: capitalize;
+    }
     </style>
 </head>
 <body>
@@ -473,7 +654,7 @@
 
         <nav class="nav-menu">
             {{-- Link ke Dashboard --}}
-            <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <div class="nav-icon">📊</div>
                 Dashboard
             </a>

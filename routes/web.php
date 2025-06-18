@@ -7,6 +7,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserManajemenController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminProfileController;
 use App\Http\Middleware\RoleMiddleware; // Import middleware
 
 /*
@@ -88,8 +90,8 @@ Route::middleware(['auth'])->group(function () {
 */
 Route::middleware(['auth', RoleMiddleware::class.':admin'])->prefix('admin')->name('admin.')->group(function () {
     // Admin Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profil', [AdminProfileController::class, 'show'])->name('profil');
     // User Management (Admin Only)
     // Ini adalah resource yang mengelola user, jadi pastikan UserManajemenController mengelola ini
     Route::resource('users', UserManajemenController::class)->except(['show']); // Contoh: 'users' bukan 'UserManajemen'

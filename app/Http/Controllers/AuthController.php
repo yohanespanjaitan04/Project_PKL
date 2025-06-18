@@ -88,7 +88,13 @@ class AuthController extends Controller
 
     public function profile()
     {
-        return view('profil.index');
+        // return view('admin.profil.show');
+        // 1. Ambil data pengguna yang sedang login
+        $user = Auth::user();
+
+        // 2. Kirim data tersebut ke view dengan nama 'user'
+        // 'compact('user')' adalah cara singkat untuk membuat array ['user' => $user]
+        return view('admin.profil.show', compact('user'));
     }
 
     private function redirectBasedOnRole()
