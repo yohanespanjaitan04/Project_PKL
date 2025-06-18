@@ -12,7 +12,7 @@
 <div class="table-container" style="padding: 30px;">
     
     {{-- Arahkan ke route yang sesuai untuk admin --}}
-    <form action="{{ route('admin.referensi.store') }}" method="POST">
+    <form action="{{ route('admin.jurnal.store') }}" method="POST">
         @csrf {{-- Token Keamanan Wajib --}}
 
         {{-- Kita gunakan grid layout agar rapi, mirip form Dosen tapi dengan style Admin --}}
@@ -79,7 +79,7 @@
 
         {{-- Tombol Aksi --}}
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 30px;">
-            <a href="{{ route('admin.referensi.index') }}" class="btn-aksi" style="background-color: #6c757d;">Batal</a>
+            <a href="{{ route('admin.jurnal.index') }}" class="btn-aksi" style="background-color: #6c757d;">Batal</a>
             <button type="submit" class="btn-aksi" style="background-color: #3b82f6;">Simpan Referensi</button>
         </div>
 

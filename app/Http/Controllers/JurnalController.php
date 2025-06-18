@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Jurnal;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class JurnalController extends Controller
 {
@@ -28,7 +29,7 @@ class JurnalController extends Controller
 
             // Ambil hanya jurnal yang dibuat oleh dosen yang sedang login
             // Pastikan Anda memiliki kolom 'user_id' di tabel 'jurnals'
-            $jurnals = Jurnal::where('user_id', Auth::id())->latest()->paginate(10);
+           $jurnals = Jurnal::where('user_id', Auth::id())->latest()->paginate(10);
             
             // Tampilkan view index milik dosen
             // Pastikan file ini ada: resources/views/dosen/jurnal/index.blade.php
@@ -36,59 +37,87 @@ class JurnalController extends Controller
         }
     }
 
-    public function create()
+
+    public function create(Request $request) // Tambahkan Request $request
     {
-        return view('dosen.jurnal.create');
+        if ($request->is('admin/*')) {
+            // Untuk admin, tampilkan view tambah jurnal di folder admin
+            // Pastikan file ini ada: resources/views/admin/TambahJurnal/create.blade.php
+            return view('admin.TambahJurnal.create'); 
+        } else {
+            // Untuk dosen, tampilkan view tambah jurnal di folder dosen
+            return view('dosen.jurnal.create');
+        }
     }
 
-    public function store(Request $request)
-    {
-        // Validasi input sesuai dengan form
-        $validated = $request->validate([
-            'tipe_referensi' => 'required|max:255',
-            'departemen' => 'required|max:255',
-            'prodi' => 'required|max:255',
-            'semester' => 'required|max:255',
-            'mata_kuliah' => 'required|max:255',
-            'judul' => 'required|max:255',
-            'pengarang' => 'required|max:255',
-            'tahun' => 'required|numeric',
-            'issue' => 'nullable|max:255',
-            'halaman' => 'nullable|numeric',
-            'abstrak' => 'required',
-            'url' => 'nullable|url',
-            'file_pdf' => 'nullable|file|mimes:pdf|max:10240',
-        ]);
-        
-        // Mapping nama field ke kolom database
-        $dataToSave = [
-            'tipe_referensi' => $validated['tipe_referensi'],
-            'departemen' => $validated['departemen'],
-            'prodi' => $validated['prodi'],
-            'semester' => $validated['semester'],
-            'mata_kuliah' => $validated['mata_kuliah'],
-            'judul' => $validated['judul'],
-            'pengarang' => $validated['pengarang'],
-            'tahun_publikasi' => $validated['tahun'], // mapping ke kolom tahun_publikasi
-            'issue' => $validated['issue'],
-            'banyak_halaman' => $validated['halaman'], // mapping ke kolom banyak_halaman
-            'abstrak' => $validated['abstrak'],
-            'doi' => $validated['url'], // mapping ke kolom doi
-        ];
-        
-        // Handle file upload jika ada
-        if ($request->hasFile('file_pdf')) {
-            $fileName = time() . '_' . $request->file('file_pdf')->getClientOriginalName();
-            $filePath = $request->file('file_pdf')->storeAs('pdfs', $fileName, 'public');
-            $dataToSave['file_path'] = $filePath; // mapping ke kolom file_path
-        }
-        
-        // Simpan jurnal
-        Jurnal::create($dataToSave);
-        
-        return redirect()->route('jurnal.index')
-            ->with('success', 'Jurnal berhasil ditambahkan!');
+
+public function store(Request $request)
+{
+    // LANGKAH 1: Tentukan aturan validasi dasar yang berlaku untuk semua role
+    $rules = [
+        'tipe_referensi' => 'required|string|in:Jurnal,Artikel,Buku',
+        'pengarang'      => 'required|string|max:255',
+        'judul'          => 'required|string|max:255',
+        'tahun'          => 'required|numeric|digits:4',
+        'abstrak'        => 'required|string',
+        'url'            => 'nullable|url',
+        'issue'          => 'nullable|string|max:100',
+        'halaman'        => 'nullable|numeric',
+        'file_pdf'       => 'nullable|file|mimes:pdf|max:10240', // Untuk upload file (opsional)
+    ];
+
+    // LANGKAH 2: Sesuaikan aturan jika request BUKAN dari admin
+    // Form untuk role selain admin (misal: dosen) akan memerlukan field tambahan ini.
+    // Asumsinya, form untuk dosen memiliki field departemen, prodi, dll.
+    if (!$request->is('admin/*')) {
+        $rules['departemen']  = 'required|string|max:255';
+        $rules['prodi']       = 'required|string|max:255';
+        $rules['semester']    = 'required|string|max:255';
+        $rules['mata_kuliah'] = 'required|string|max:255';
     }
+
+    // LANGKAH 3: Jalankan validasi HANYA SATU KALI
+    $validated = $request->validate($rules);
+
+    // LANGKAH 4: Siapkan data untuk disimpan, sesuaikan nama field dengan kolom database
+    $dataToSave = [
+        'tipe_referensi'  => $validated['tipe_referensi'],
+        'pengarang'       => $validated['pengarang'],
+        'judul'           => $validated['judul'],
+        'tahun_publikasi' => $validated['tahun'], // Sesuai mapping Anda
+        'abstrak'         => $validated['abstrak'],
+        'doi'             => $validated['url'] ?? null,     // Sesuai mapping Anda
+        'issue'           => $validated['issue'] ?? null,
+        'banyak_halaman'  => $validated['halaman'] ?? null, // Sesuai mapping Anda
+        'user_id'         => Auth::id(), // Mengambil ID user yang sedang login
+    ];
+
+    // Tambahkan data departemen, prodi, dll. jika ada (untuk non-admin)
+    if (isset($validated['departemen'])) {
+        $dataToSave['departemen'] = $validated['departemen'];
+        $dataToSave['prodi'] = $validated['prodi'];
+        $dataToSave['semester'] = $validated['semester'];
+        $dataToSave['mata_kuliah'] = $validated['mata_kuliah'];
+    }
+
+    // Handle file upload jika ada
+    if ($request->hasFile('file_pdf')) {
+        $fileName = time() . '_' . $request->file('file_pdf')->getClientOriginalName();
+        $filePath = $request->file('file_pdf')->storeAs('pdfs', $fileName, 'public');
+        $dataToSave['file_path'] = $filePath;
+    }
+    
+    
+    // LANGKAH 5: Simpan ke database
+     Jurnal::create($dataToSave);
+
+    // LANGKAH 6: Redirect ke halaman yang sesuai dengan pesan sukses
+    $redirectRoute = $request->is('admin/*') ? 'admin.jurnal.index' : 'dosen.jurnal.index';
+    
+    return redirect()->route($redirectRoute)
+                     ->with('success', 'Referensi berhasil ditambahkan!');
+}
+        
 
     // Method untuk menampilkan detail jurnal
     public function show(Jurnal $jurnal)
@@ -99,12 +128,13 @@ class JurnalController extends Controller
     // Method untuk menampilkan form edit
     public function edit(Jurnal $jurnal)
     {
-        return view('jurnal.edit', compact('jurnal'));
+        return view('dosen.home.bulk-edit', compact('jurnal'));
     }
 
     // Method untuk update jurnal
     public function update(Request $request, Jurnal $jurnal)
     {
+         //dd(Auth::id());
         // Validasi input
         $validated = $request->validate([
             'tipe_referensi' => 'required|max:255',
@@ -132,11 +162,12 @@ class JurnalController extends Controller
             'judul' => $validated['judul'],
             'pengarang' => $validated['pengarang'],
             'tahun_publikasi' => $validated['tahun'],
-            'issue' => $validated['issue'],
-            'banyak_halaman' => $validated['halaman'],
+            'issue' => $validated['issue'] ?? null,            // <-- SUDAH DIPERBAIKI
+            'banyak_halaman' => $validated['halaman'] ?? null,  // <-- SUDAH DIPERBAIKI
             'abstrak' => $validated['abstrak'],
-            'doi' => $validated['url'],
-        ];
+            'doi' => $validated['url'] ?? null,  
+             'user_id' => Auth::id(),
+            ];
         
         // Handle file upload jika ada file baru
         if ($request->hasFile('file_pdf')) {

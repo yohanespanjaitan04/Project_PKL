@@ -32,7 +32,8 @@ class Jurnal extends Model
         'penerbit',
         'tempat_terbit',
         'url',
-        'diakses_tanggal'
+        'diakses_tanggal',
+        'user_id'
     ];
 
     protected $casts = [
@@ -42,4 +43,12 @@ class Jurnal extends Model
         'tahun_terbit' => 'integer',
         'diakses_tanggal' => 'date'
     ];
+ /**
+     * Mendefinisikan relasi bahwa setiap Jurnal dimiliki oleh satu User.
+     */
+    public function user()
+    {
+        // Pastikan Anda memiliki model User
+        return $this->belongsTo(User::class);
+    }
 }

@@ -479,7 +479,7 @@
             </a>
 
             {{-- Link ke User Manajemen --}}
-            <a href="{{ route('admin.UserManajemen.index') }}" class="nav-item {{ request()->routeIs('admin.UserManajemen.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.users.index') }}" class="nav-item {{ request()->routeIs('admin.UserManajemen.*') ? 'active' : '' }}">
                 <div class="nav-icon">👥</div>
                 User Manajemen
             </a>
