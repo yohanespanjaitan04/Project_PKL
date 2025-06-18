@@ -26,9 +26,11 @@
             <label for="departemen">Departemen <span class="required">*</span></label>
             <select name="departemen" id="departemen" required>
                 <option value="">Pilih Departemen</option>
-                <option value="Informatika" {{ old('departemen', $jurnal->departemen) == 'Informatika' ? 'selected' : '' }}>Informatika</option>
-                <option value="Elektro" {{ old('departemen', $jurnal->departemen) == 'Elektro' ? 'selected' : '' }}>Elektro</option>
-                <option value="Sipil" {{ old('departemen', $jurnal->departemen) == 'Sipil' ? 'selected' : '' }}>Sipil</option>
+                {{-- Opsi Departemen sesuai dengan logika controller --}}
+                <option value="Fakultas Sains dan Matematika" {{ old('departemen', $jurnal->departemen) == 'Fakultas Sains dan Matematika' ? 'selected' : '' }}>Fakultas Sains dan Matematika</option>
+                <option value="Fakultas Teknik" {{ old('departemen', $jurnal->departemen) == 'Fakultas Teknik' ? 'selected' : '' }}>Fakultas Teknik</option>
+                <option value="Fakultas Ekonomi dan Bisnis" {{ old('departemen', $jurnal->departemen) == 'Fakultas Ekonomi dan Bisnis' ? 'selected' : '' }}>Fakultas Ekonomi dan Bisnis</option>
+                {{-- Anda bisa menambahkan opsi lain jika diperlukan --}}
             </select>
             @error('departemen')
                 <span class="error">{{ $message }}</span>
@@ -37,9 +39,9 @@
 
         <div class="form-group">
             <label for="prodi">Program Studi <span class="required">*</span></label>
-            <select name="prodi" id="prodi" required>
+            <select name="prodi" id="prodi" required disabled>
                 <option value="">Pilih Program Studi</option>
-                <option value="{{ $jurnal->prodi }}" selected>{{ $jurnal->prodi }}</option>
+                {{-- Opsi akan diisi oleh JavaScript --}}
             </select>
             @error('prodi')
                 <span class="error">{{ $message }}</span>
@@ -48,13 +50,9 @@
 
         <div class="form-group">
             <label for="semester">Semester <span class="required">*</span></label>
-            <select name="semester" id="semester" required>
+            <select name="semester" id="semester" required disabled>
                 <option value="">Pilih Semester</option>
-                @for($i = 1; $i <= 8; $i++)
-                    <option value="{{ $i }}" {{ old('semester', $jurnal->semester) == $i ? 'selected' : '' }}>
-                        Semester {{ $i }}
-                    </option>
-                @endfor
+                {{-- Opsi akan diisi oleh JavaScript --}}
             </select>
             @error('semester')
                 <span class="error">{{ $message }}</span>
@@ -63,9 +61,9 @@
 
         <div class="form-group">
             <label for="mata_kuliah">Mata Kuliah <span class="required">*</span></label>
-            <select name="mata_kuliah" id="mata_kuliah" required>
+            <select name="mata_kuliah" id="mata_kuliah" required disabled>
                 <option value="">Pilih Mata Kuliah</option>
-                <option value="{{ $jurnal->mata_kuliah }}" selected>{{ $jurnal->mata_kuliah }}</option>
+                {{-- Opsi akan diisi oleh JavaScript --}}
             </select>
             @error('mata_kuliah')
                 <span class="error">{{ $message }}</span>
@@ -152,6 +150,7 @@
 </div>
 
 <style>
+/* CSS Anda yang sudah ada, tidak ada perubahan di sini */
 .form-container {
     max-width: 600px;
     margin: 0 auto;
@@ -232,24 +231,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const semesterSelect = document.getElementById('semester');
     const mataKuliahSelect = document.getElementById('mata_kuliah');
 
-    // Reset function untuk dropdown
+    // Ambil nilai awal dari objek $jurnal untuk pre-seleksi
+    const initialDepartemen = "{{ old('departemen', $jurnal->departemen ?? '') }}";
+    const initialProdi = "{{ old('prodi', $jurnal->prodi ?? '') }}";
+    const initialSemester = "{{ old('semester', $jurnal->semester ?? '') }}";
+    const initialMataKuliah = "{{ old('mata_kuliah', $jurnal->mata_kuliah ?? '') }}";
+
+    // Fungsi untuk mereset dropdown
     function resetDropdown(selectElement, defaultText) {
         selectElement.innerHTML = `<option value="">${defaultText}</option>`;
         selectElement.disabled = true;
     }
 
-    // Event listener untuk departemen
-    departemenSelect.addEventListener('change', function() {
-        const departemen = this.value;
-        
-        // Reset dropdown yang tergantung
-        resetDropdown(prodiSelect, '-- Pilih Prodi --');
+    // Fungsi untuk mengambil dan mengisi data program studi
+    function fetchProdi(departemen, selectedProdi = null) {
+        resetDropdown(prodiSelect, '-- Pilih Program Studi --');
         resetDropdown(semesterSelect, '-- Pilih Semester --');
         resetDropdown(mataKuliahSelect, '-- Pilih Mata Kuliah --');
 
         if (departemen) {
-            // AJAX request untuk mengambil data prodi
-            fetch(`/getProdi?departemen=${departemen}`)
+            fetch(`/getProdi?departemen=${encodeURIComponent(departemen)}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -257,33 +258,36 @@ document.addEventListener('DOMContentLoaded', function() {
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Prodi data:', data); // Debug log
+                    console.log('Data Prodi:', data); // Log untuk debugging
                     prodiSelect.disabled = false;
                     data.forEach(prodi => {
                         const option = document.createElement('option');
                         option.value = prodi;
                         option.textContent = prodi;
+                        if (selectedProdi && prodi === selectedProdi) {
+                            option.selected = true;
+                        }
                         prodiSelect.appendChild(option);
                     });
+                    // Setelah mengisi prodi, jika ada initial prodi, panggil fetchSemester
+                    if (selectedProdi) {
+                        fetchSemester(selectedProdi, initialSemester);
+                    }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    alert('Gagal memuat data prodi: ' + error.message);
+                    console.error('Error fetching prodi:', error);
+                    alert('Gagal memuat data program studi: ' + error.message);
                 });
         }
-    });
+    }
 
-    // Event listener untuk prodi
-    prodiSelect.addEventListener('change', function() {
-        const prodi = this.value;
-        
-        // Reset dropdown yang tergantung
+    // Fungsi untuk mengambil dan mengisi data semester
+    function fetchSemester(prodi, selectedSemester = null) {
         resetDropdown(semesterSelect, '-- Pilih Semester --');
         resetDropdown(mataKuliahSelect, '-- Pilih Mata Kuliah --');
 
         if (prodi) {
-            // AJAX request untuk mengambil data semester
-            fetch(`/getSemester?prodi=${prodi}`)
+            fetch(`/getSemester?prodi=${encodeURIComponent(prodi)}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -291,33 +295,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Semester data:', data); // Debug log
+                    console.log('Data Semester:', data); // Log untuk debugging
                     semesterSelect.disabled = false;
                     data.forEach(semester => {
                         const option = document.createElement('option');
                         option.value = semester;
                         option.textContent = `Semester ${semester}`;
+                        if (selectedSemester && parseInt(semester) === parseInt(selectedSemester)) {
+                            option.selected = true;
+                        }
                         semesterSelect.appendChild(option);
                     });
+                    // Setelah mengisi semester, jika ada initial semester, panggil fetchMataKuliah
+                    if (selectedSemester) {
+                        fetchMataKuliah(prodi, selectedSemester, initialMataKuliah);
+                    }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error fetching semester:', error);
                     alert('Gagal memuat data semester: ' + error.message);
                 });
         }
-    });
+    }
 
-    // Event listener untuk semester
-    semesterSelect.addEventListener('change', function() {
-        const semester = this.value;
-        const prodi = prodiSelect.value;
-        
-        // Reset dropdown mata kuliah
+    // Fungsi untuk mengambil dan mengisi data mata kuliah
+    function fetchMataKuliah(prodi, semester, selectedMataKuliah = null) {
         resetDropdown(mataKuliahSelect, '-- Pilih Mata Kuliah --');
 
         if (semester && prodi) {
-            // AJAX request untuk mengambil data mata kuliah
-            fetch(`/getMataKuliah?prodi=${prodi}&semester=${semester}`)
+            fetch(`/getMataKuliah?prodi=${encodeURIComponent(prodi)}&semester=${encodeURIComponent(semester)}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -325,21 +331,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Mata Kuliah data:', data); // Debug log
+                    console.log('Data Mata Kuliah:', data); // Log untuk debugging
                     mataKuliahSelect.disabled = false;
                     data.forEach(mataKuliah => {
                         const option = document.createElement('option');
                         option.value = mataKuliah;
                         option.textContent = mataKuliah;
+                        if (selectedMataKuliah && mataKuliah === selectedMataKuliah) {
+                            option.selected = true;
+                        }
                         mataKuliahSelect.appendChild(option);
                     });
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error fetching mata kuliah:', error);
                     alert('Gagal memuat data mata kuliah: ' + error.message);
                 });
         }
+    }
+
+    // Event listener untuk perubahan Departemen
+    departemenSelect.addEventListener('change', function() {
+        fetchProdi(this.value);
     });
+
+    // Event listener untuk perubahan Program Studi
+    prodiSelect.addEventListener('change', function() {
+        fetchSemester(this.value);
+    });
+
+    // Event listener untuk perubahan Semester
+    semesterSelect.addEventListener('change', function() {
+        const semester = this.value;
+        const prodi = prodiSelect.value;
+        fetchMataKuliah(prodi, semester);
+    });
+
+    // Panggil fungsi fetch saat halaman pertama kali dimuat jika departemen sudah ada
+    // Ini akan memicu rantai pemanggilan fetchProdi -> fetchSemester -> fetchMataKuliah
+    if (initialDepartemen) {
+        fetchProdi(initialDepartemen, initialProdi);
+    }
 });
 </script>
 @endsection

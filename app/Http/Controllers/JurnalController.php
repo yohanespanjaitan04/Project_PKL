@@ -185,8 +185,10 @@ public function store(Request $request)
         // Update jurnal
         $jurnal->update($dataToUpdate);
         
-        return redirect()->route('jurnal.index')
-            ->with('success', 'Jurnal berhasil diupdate!');
+        // Redirect ke halaman yang sesuai dengan peran (role) pengguna
+    $redirectRoute = $request->is('admin/*') ? 'admin.jurnal.index' : 'dosen.jurnal.index';
+            return redirect()->route($redirectRoute)
+        ->with('success', 'Jurnal berhasil diupdate!');
     }
 
     // Method untuk hapus jurnal
