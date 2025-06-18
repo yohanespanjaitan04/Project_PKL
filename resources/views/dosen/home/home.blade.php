@@ -5,7 +5,6 @@
     <h2>Daftar Jurnal</h2>
     <hr>
 
-    <!-- Filter Section -->
     <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
         <form method="GET" action="{{ route('home') }}" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto auto; gap: 16px; align-items: end;">
             
@@ -13,8 +12,7 @@
                 <label for="departemen" style="display: block; margin-bottom: 5px; font-weight: bold;">Departemen</label>
                 <select name="departemen" id="departemen" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                     <option value="">-- Semua Departemen --</option>
-                    <option value="Informatika" {{ request('departemen') == 'Informatika' ? 'selected' : '' }}>Informatika</option>
-                    <option value="Elektro" {{ request('departemen') == 'Elektro' ? 'selected' : '' }}>Elektro</option>
+                    <option value="Elektro" {{ request('departemen') == 'Fakultas Sains dan Matematika' ? 'selected' : '' }}>Fakultas Sains dan Matematika</option>
                     <option value="Sipil" {{ request('departemen') == 'Sipil' ? 'selected' : '' }}>Sipil</option>
                     <option value="Ekonomi" {{ request('departemen') == 'Ekonomi' ? 'selected' : '' }}>Ekonomi</option>
                 </select>
@@ -43,7 +41,6 @@
         </form>
     </div>
 
-    <!-- Messages -->
     @if(session('success'))
         <div style="background: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 16px; border: 1px solid #c3e6cb;">
             {{ session('success') }}
@@ -56,7 +53,6 @@
         </div>
     @endif
 
-    <!-- Action Bar for Selected Items -->
     <div id="actionBar" style="background: #007bff; color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: none; align-items: center; justify-content: space-between;">
         <div>
             <span id="selectedCount">0</span> jurnal dipilih
@@ -71,7 +67,6 @@
         </div>
     </div>
 
-    <!-- Table -->
     <div style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
@@ -91,7 +86,8 @@
                 @forelse($jurnals ?? [] as $index => $jurnal)
                 <tr style="border-bottom: 1px solid #dee2e6;">
                     <td style="padding: 12px;">
-                        <input type="checkbox" class="jurnal-checkbox" value="{{ $jurnal->id }}" style="cursor: pointer;">
+                        {{-- UBAH DI SINI: name="selected_jurnal_ids[]" --}}
+                        <input type="checkbox" class="jurnal-checkbox" name="selected_jurnal_ids[]" value="{{ $jurnal->id }}" style="cursor: pointer;">
                     </td>
                     <td style="padding: 12px;">{{ ($jurnals->currentPage() - 1) * $jurnals->perPage() + $index + 1 }}</td>
                     <td style="padding: 12px;">{{ $jurnal->judul ?? 'Tidak ada judul' }}</td>
@@ -127,14 +123,12 @@
         </table>
     </div>
 
-    <!-- Pagination -->
     @if(isset($jurnals) && method_exists($jurnals, 'links'))
     <div style="margin-top: 20px; display: flex; justify-content: center;">
         {{ $jurnals->appends(request()->query())->links() }}
     </div>
     @endif
 
-    <!-- Statistik -->
     <div style="margin-top: 20px; padding: 16px; background: #e9ecef; border-radius: 8px;">
         <p style="margin: 0; color: #6c757d; text-align: center;">
             @if(isset($jurnals) && $jurnals->count() > 0)
@@ -148,10 +142,11 @@
         </p>
     </div>
 
-    <!-- Hidden Form for Bulk Edit -->
     <form id="bulkEditForm" action="{{ route('jurnal.bulk-edit') }}" method="POST" style="display: none;">
         @csrf
-        <input type="hidden" id="selectedIds" name="jurnal_ids">
+        {{-- UBAH DI SINI: name="selected_jurnal_ids[]" dan hapus id="selectedIds" --}}
+        {{-- Kita akan menambahkan input ini secara dinamis melalui JS --}}
+        {{-- <input type="hidden" id="selectedIds" name="jurnal_ids"> --}}
     </form>
 </div>
 
@@ -164,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const editSelectedBtn = document.getElementById('editSelectedBtn');
     const cancelSelectionBtn = document.getElementById('cancelSelectionBtn');
     const bulkEditForm = document.getElementById('bulkEditForm');
-    const selectedIdsInput = document.getElementById('selectedIds');
+    // const selectedIdsInput = document.getElementById('selectedIds'); // Hapus ini atau komentar
 
     // Function to update UI based on selected items
     function updateSelection() {
@@ -226,7 +221,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (confirm(`Anda akan mengedit ${selectedIds.length} jurnal. Lanjutkan?`)) {
-            selectedIdsInput.value = selectedIds.join(',');
+            // Hapus input hidden yang lama jika ada
+            while (bulkEditForm.firstChild) {
+                bulkEditForm.removeChild(bulkEditForm.firstChild);
+            }
+
+            // Tambahkan @csrf token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = '{{ csrf_token() }}';
+            bulkEditForm.appendChild(csrfInput);
+
+            // Buat input hidden untuk setiap ID yang dipilih
+            selectedIds.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'selected_jurnal_ids[]'; // <--- NAMA INI SANGAT PENTING
+                input.value = id;
+                bulkEditForm.appendChild(input);
+            });
+            
             bulkEditForm.submit();
         }
     });

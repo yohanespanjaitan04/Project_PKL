@@ -26,7 +26,7 @@ class UserManajemenController extends Controller
     public function create()
     {
         //
-        return view('admin.UserManajemen.create'); // Menampilkan form tambah user
+        return view('admin.users.create'); // Menampilkan form tambah user
     }
 
     /**
