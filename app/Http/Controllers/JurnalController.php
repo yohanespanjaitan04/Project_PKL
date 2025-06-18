@@ -128,79 +128,48 @@ public function store(Request $request)
     // Method untuk menampilkan form edit
     public function edit(Jurnal $jurnal)
     {
-        return view('dosen.home.bulk-edit', compact('jurnal'));
+        return view('dosen.jurnal.edit', compact('jurnal'));
     }
 
     // Method untuk update jurnal
     public function update(Request $request, Jurnal $jurnal)
     {
-         //dd(Auth::id());
-        // Validasi input
-        $validated = $request->validate([
-            'tipe_referensi' => 'required|max:255',
-            'departemen' => 'required|max:255',
-            'prodi' => 'required|max:255',
-            'semester' => 'required|max:255',
-            'mata_kuliah' => 'required|max:255',
-            'judul' => 'required|max:255',
-            'pengarang' => 'required|max:255',
-            'tahun' => 'required|numeric',
-            'issue' => 'nullable|max:255',
-            'halaman' => 'nullable|numeric',
-            'abstrak' => 'required',
-            'url' => 'nullable|url',
-            'file_pdf' => 'nullable|file|mimes:pdf|max:10240',
+        // [PERBAIKAN PENTING] Validasi ini disesuaikan HANYA untuk form modal admin.
+        // Tidak ada lagi validasi untuk 'departemen', 'prodi', dll.
+        $validatedData = $request->validate([
+            'tipe_referensi'  => 'required|string|max:255',
+            'pengarang'       => 'required|string|max:255',
+            'judul'           => 'required|string|max:255',
+            'tahun_publikasi' => 'required|numeric|digits:4',
+            'doi'             => 'nullable|url',
+            'issue'           => 'nullable|string|max:100',
+            'banyak_halaman'  => 'nullable|numeric',
+            'abstrak'         => 'required|string',
         ]);
         
-        // Mapping nama field ke kolom database
-        $dataToUpdate = [
-            'tipe_referensi' => $validated['tipe_referensi'],
-            'departemen' => $validated['departemen'],
-            'prodi' => $validated['prodi'],
-            'semester' => $validated['semester'],
-            'mata_kuliah' => $validated['mata_kuliah'],
-            'judul' => $validated['judul'],
-            'pengarang' => $validated['pengarang'],
-            'tahun_publikasi' => $validated['tahun'],
-            'issue' => $validated['issue'] ?? null,            // <-- SUDAH DIPERBAIKI
-            'banyak_halaman' => $validated['halaman'] ?? null,  // <-- SUDAH DIPERBAIKI
-            'abstrak' => $validated['abstrak'],
-            'doi' => $validated['url'] ?? null,  
-             'user_id' => Auth::id(),
-            ];
-        
-        // Handle file upload jika ada file baru
-        if ($request->hasFile('file_pdf')) {
-            // Hapus file lama jika ada
-            if ($jurnal->file_path && Storage::disk('public')->exists($jurnal->file_path)) {
-                Storage::disk('public')->delete($jurnal->file_path);
-            }
-            
-            // Upload file baru
-            $fileName = time() . '_' . $request->file('file_pdf')->getClientOriginalName();
-            $filePath = $request->file('file_pdf')->storeAs('pdfs', $fileName, 'public');
-            $dataToUpdate['file_path'] = $filePath;
-        }
-        
-        // Update jurnal
-        $jurnal->update($dataToUpdate);
-        
-        return redirect()->route('jurnal.index')
+        // [PERBAIKAN PENTING] Langsung update karena nama input sudah konsisten.
+        $jurnal->update($validatedData);
+
+        // [PERBAIKAN PENTING] Redirect ke rute admin secara eksplisit.
+        return redirect()->route('admin.jurnal.index')
             ->with('success', 'Jurnal berhasil diupdate!');
     }
 
-    // Method untuk hapus jurnal
+    /**
+     * [PERBAIKAN TOTAL] Method untuk HAPUS jurnal.
+     */
     public function destroy(Jurnal $jurnal)
     {
-        // Hapus file jika ada
+        // Hapus file dari storage jika ada
         if ($jurnal->file_path && Storage::disk('public')->exists($jurnal->file_path)) {
             Storage::disk('public')->delete($jurnal->file_path);
         }
         
-        // Hapus data jurnal
+        // Hapus data dari database
         $jurnal->delete();
         
-        return redirect()->route('jurnal.index')
+        // [PERBAIKAN PENTING] Redirect ke rute admin secara eksplisit.
+        return redirect()->route('admin.jurnal.index')
             ->with('success', 'Jurnal berhasil dihapus!');
     }
 
