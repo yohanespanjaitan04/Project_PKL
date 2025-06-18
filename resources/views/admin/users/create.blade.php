@@ -330,7 +330,7 @@
             <div class="form-section">
                 <div class="form-section-title">Informasi User</div>
                 
-                <form action="{{ route('admin.UserManajemen.store') }}" method="POST">
+                <form action="{{ route('admin.users.store') }}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="name">Nama Lengkap <span class="required">*</span></label>

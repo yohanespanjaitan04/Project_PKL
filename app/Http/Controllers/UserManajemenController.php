@@ -17,7 +17,7 @@ class UserManajemenController extends Controller
     {
         // Gunakan model User
         $users = User::latest()->paginate(10); 
-        return view('admin.UserManajemen.index', compact('users'));
+        return view('admin.users.index', compact('users'));
     }
 
     /**
@@ -48,7 +48,7 @@ class UserManajemenController extends Controller
 
         \App\Models\User::create($validatedData); // pastikan kamu pakai model yg benar
 
-        return redirect()->route('admin.UserManajemen.index')->with('success', 'User berhasil ditambahkan');
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan');
     }
 
     /**
@@ -104,7 +104,7 @@ class UserManajemenController extends Controller
         
         $user->save();
         
-        return redirect()->route('admin.UserManajemen.index')->with('success', 'Data user berhasil diperbarui!');
+        return redirect()->route('admin.users.index')->with('success', 'Data user berhasil diperbarui!');
     }
 
     /**
@@ -114,6 +114,6 @@ class UserManajemenController extends Controller
     {
         $user = User::findOrFail($id);
         $user->delete();
-        return redirect()->route('admin.UserManajemen.index')->with('success', 'User berhasil dihapus');
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus');
     }
 }

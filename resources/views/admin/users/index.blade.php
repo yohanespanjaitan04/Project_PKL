@@ -9,7 +9,7 @@
     <div class="main-content">
         <div class="header">
             <h1>Daftar User</h1>
-            <a href="{{ route('admin.UserManajemen.create')}}" class="add-user-btn">
+            <a href="{{ route('admin.users.create')}}" class="add-user-btn">
                 <span>👤</span>
                 Tambah User Baru
             </a>
@@ -48,11 +48,11 @@
                                             data-email="{{ $user->email }}"
                                             data-role="{{ $user->role }}"
                                             data-department="{{ $user->department }}"
-                                            data-update-url="{{ route('admin.UserManajemen.update', $user->id) }}">
+                                            data-update-url="{{ route('admin.users.update', $user->id) }}">
                                         Edit
                                     </button>
                                     {{-- TOMBOL HAPUS (WAJIB PAKAI FORM) - DIMODIFIKASI --}}
-                                    <form action="{{ route('admin.UserManajemen.destroy', $user->id) }}" method="POST" data-user-name="{{ $user->name }}">
+                                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" data-user-name="{{ $user->name }}">
                                         @csrf
                                         @method('DELETE')
                                         {{-- Tombol ini sekarang memicu modal, bukan submit langsung --}}
