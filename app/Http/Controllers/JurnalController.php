@@ -136,25 +136,60 @@ public function store(Request $request)
     {
         // [PERBAIKAN PENTING] Validasi ini disesuaikan HANYA untuk form modal admin.
         // Tidak ada lagi validasi untuk 'departemen', 'prodi', dll.
-        $validatedData = $request->validate([
-            'tipe_referensi'  => 'required|string|max:255',
-            'pengarang'       => 'required|string|max:255',
-            'judul'           => 'required|string|max:255',
-            'tahun_publikasi' => 'required|numeric|digits:4',
-            'doi'             => 'nullable|url',
-            'issue'           => 'nullable|string|max:100',
-            'banyak_halaman'  => 'nullable|numeric',
-            'abstrak'         => 'required|string',
-        ]);
-        
+       $validatedData;
+
+// Asumsi: Anda memiliki cara untuk memeriksa peran user yang sedang login.
+// Ganti 'Auth::user()->role' dengan logika yang sesuai di aplikasi Anda.
+// Misalnya, bisa juga dengan Auth::user()->isAdmin() atau metode lainnya.
+if (Auth::user()->role == 'admin') {
+
+    // ===================================
+    // VALIDASI UNTUK ADMIN
+    // ===================================
+    // [PERBAIKAN PENTING] Validasi ini disesuaikan HANYA untuk form modal admin.
+    // Tidak ada lagi validasi untuk 'departemen', 'prodi', dll.
+    $validatedData = $request->validate([
+        'tipe_referensi'  => 'required|string|max:255',
+        'pengarang'       => 'required|string|max:255',
+        'judul'           => 'required|string|max:255',
+        'tahun_publikasi' => 'required|numeric|digits:4',
+        'doi'             => 'nullable|url',
+        'issue'           => 'nullable|string|max:100',
+        'banyak_halaman'  => 'nullable|numeric',
+        'abstrak'         => 'required|string',
+    ]);
+
+} else { // Anggap selain admin adalah dosen atau peran lain yang butuh validasi ini
+
+    // ===================================
+    // VALIDASI UNTUK DOSEN
+    // ===================================
+    $validatedData = $request->validate([
+        'tipe_referensi' => 'required|max:255',
+        'departemen'     => 'required|max:255',
+        'prodi'          => 'required|max:255',
+        'semester'       => 'required|max:255',
+        'mata_kuliah'    => 'required|max:255',
+        'judul'          => 'required|max:255',
+        'pengarang'      => 'required|max:255',
+        'tahun'          => 'required|numeric',
+        'issue'          => 'nullable|max:255',
+        'halaman'        => 'nullable|numeric',
+        'abstrak'        => 'required',
+        'url'            => 'nullable|url',
+        'file_pdf'       => 'nullable|file|mimes:pdf|max:10240',
+    ]);
+}
         // [PERBAIKAN PENTING] Langsung update karena nama input sudah konsisten.
         $jurnal->update($validatedData);
 
         // [PERBAIKAN PENTING] Redirect ke rute admin secara eksplisit.
-        return redirect()->route('admin.jurnal.index')
-            ->with('success', 'Jurnal berhasil diupdate!');
+         // Redirect ke halaman yang sesuai dengan peran (role) pengguna
+    $redirectRoute = $request->is('admin/*') ? 'admin.jurnal.index' : 'dosen.jurnal.index';
+            return redirect()->route($redirectRoute)
+        ->with('success', 'Jurnal berhasil diupdate!');
     }
-
+    
     /**
      * [PERBAIKAN TOTAL] Method untuk HAPUS jurnal.
      */
