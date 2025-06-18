@@ -153,6 +153,7 @@ public function store(Request $request)
         // [PERBAIKAN PENTING] Redirect ke rute admin secara eksplisit.
         return redirect()->route('admin.jurnal.index')
             ->with('success', 'Jurnal berhasil diupdate!');
+            
     }
 
     /**
