@@ -86,7 +86,7 @@
     </div>
 
     <div class="form-actions">
-        <a href="{{ route('jurnal.index') }}" class="btn btn-secondary">Kembali</a>
+        <a href="{{ route('home') }}" class="btn btn-secondary">Kembali</a>
         <a href="{{ route('jurnal.edit', $jurnal->id) }}" class="btn btn-success">Edit</a>
         <form action="{{ route('jurnal.destroy', $jurnal->id) }}" method="POST" style="display:inline" 
               onsubmit="return confirm('Apakah Anda yakin ingin menghapus jurnal ini?')">

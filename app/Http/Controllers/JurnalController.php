@@ -128,13 +128,13 @@ public function store(Request $request)
     // Method untuk menampilkan form edit
     public function edit(Jurnal $jurnal)
     {
-        return view('dosen.home.bulk-edit', compact('jurnal'));
+        return view('dosen.jurnal.edit', compact('jurnal'));
     }
 
     // Method untuk update jurnal
     public function update(Request $request, Jurnal $jurnal)
     {
-         //dd(Auth::id());
+        
         // Validasi input
         $validated = $request->validate([
             'tipe_referensi' => 'required|max:255',

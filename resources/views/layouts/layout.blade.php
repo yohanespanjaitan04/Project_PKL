@@ -92,6 +92,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     {{-- Script kustom Anda (script.js) --}}
-    <script src="{{ asset('js/script.js') }}"></script>
+    <!-- <script src="{{ asset('js/script.js') }}"></script> -->
 </body>
 </html>
