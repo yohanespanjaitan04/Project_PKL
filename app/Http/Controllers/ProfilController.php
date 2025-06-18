@@ -3,26 +3,33 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ProfilController extends Controller
 {
-    // Tampilkan form edit profil
+    /**
+     * Tampilkan form profil dengan data dari user yang sedang login (Hanya-Lihat).
+     *
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function edit()
     {
-        // data dummy
-        $user = [
-            'nama' => 'Rayvis Budi',
-            'email'=> 'rayvis.budi@undip.ac.id',
-            'telepon'=>'081234567890',
-            'departemen'=>'teknik'
-        ];
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Anda harus login untuk mengakses halaman profil.');
+        }
+
         return view('profil', compact('user'));
     }
 
-    // Update profil (dummy)
-    public function update(Request $request)
-    {
-        // nanti update ke DB
-        return back()->with('success', 'Profil berhasil diperbarui!');
-    }
+    /**
+     * Method ini tidak akan digunakan lagi karena form tidak memiliki tombol submit.
+     * Jika diakses secara langsung (misal melalui Postman), akan me-redirect atau error.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    
 }
