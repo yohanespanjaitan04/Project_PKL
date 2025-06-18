@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Jurnal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class HomeController extends Controller
 {
@@ -185,30 +186,29 @@ class HomeController extends Controller
             return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengedit jurnal.');
         }
 
-        try {
-            // Validasi input - ubah dari selected_ids ke jurnal_ids
+       try {
+            // Validasi input: Harapkan 'selected_jurnal_ids' sebagai array
             $request->validate([
-                'jurnal_ids' => 'required|string'
+                'selected_jurnal_ids' => 'required|array', // <--- PENTING: Harapkan ARRAY
+                'selected_jurnal_ids.*' => 'exists:jurnals,id' // Setiap ID harus ada
             ]);
 
-            // Parse selected IDs - ubah dari selected_ids ke jurnal_ids
-            $selectedIds = explode(',', $request->jurnal_ids);
-            $selectedIds = array_filter($selectedIds); // Remove empty values
-            
+            // Ambil ID dari request dengan nama yang benar
+            $selectedIds = $request->input('selected_jurnal_ids'); // <--- PENTING: Nama ini harus sesuai dengan nama checkbox di form
+
             if (empty($selectedIds)) {
                 return redirect()->back()->with('error', 'Tidak ada jurnal yang dipilih.');
             }
 
             // Ambil data jurnal yang dipilih
-            $selectedJurnals = Jurnal::whereIn('id', $selectedIds)->get();
+            $jurnals = Jurnal::whereIn('id', $selectedIds)->get(); // Variabel yang diteruskan ke view adalah $jurnals (plural)
 
-            if ($selectedJurnals->isEmpty()) {
+            if ($jurnals->isEmpty()) {
                 return redirect()->back()->with('error', 'Jurnal yang dipilih tidak ditemukan.');
             }
 
-            // Redirect ke halaman bulk edit dengan data yang dipilih
-            return view('dosen.home.bulk-edit', compact('selectedJurnals'));
-
+            // Teruskan koleksi jurnal ke view
+            return view('dosen.home.bulk-edit', compact('jurnals')); // <--- PENTING: Meneruskan $jurnals (plural)
         } catch (\Exception $e) {
             \Log::error('Error in bulk edit: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -216,7 +216,7 @@ class HomeController extends Controller
     }
 
     // Method untuk memproses update bulk edit - HANYA UNTUK DOSEN DAN ADMIN
-    public function bulkUpdate(Request $request)
+     public function bulkUpdate(Request $request)
     {
         // Cek authorization
         $user = Auth::user();
@@ -225,84 +225,77 @@ class HomeController extends Controller
         }
 
         try {
-            // Validasi basic - PERBAIKAN: ubah validasi untuk menerima format yang benar
+            // PERBAIKAN DI SINI: Ubah 'jurnal_ids' menjadi 'selected_jurnal_ids'
             $request->validate([
-                'jurnal_ids' => 'required|array',
-                'jurnal_ids.*' => 'exists:jurnals,id'
+                'jurnals' => 'required|array', // Ini validasi untuk array utama dari form bulk-edit
+                'jurnals.*.id' => 'required|exists:jurnals,id', // Validasi untuk ID setiap jurnal
+                'jurnals.*.judul' => 'required|string|max:255',
+                'jurnals.*.pengarang' => 'required|string|max:255',
+                'jurnals.*.tipe_referensi' => 'required|string|in:Jurnal,Artikel,Buku',
+                'jurnals.*.tahun_publikasi' => 'required|integer|min:1900|max:' . (date('Y') + 5),
+                // Tambahkan validasi untuk bidang lain yang Anda sertakan di bulk-edit.blade.php
+                'jurnals.*.departemen' => 'nullable|string|max:255', // Sesuaikan jika required
+                'jurnals.*.prodi' => 'nullable|string|max:255', // Sesuaikan jika required
+                'jurnals.*.semester' => 'nullable|integer|min:1|max:8', // Sesuaikan jika required
+                'jurnals.*.mata_kuliah' => 'nullable|string|max:255', // Sesuaikan jika required
+                'jurnals.*.abstrak' => 'nullable|string',
+                'jurnals.*.doi' => 'nullable|url|max:255', // Sesuaikan nama jika di DB 'url'
+                // 'jurnals.*.issue' => 'nullable|string|max:255', // Jika ada di form
+                // 'jurnals.*.halaman' => 'nullable|integer', // Jika ada di form
             ]);
 
             $updatedCount = 0;
             $errors = [];
 
-            foreach ($request->jurnal_ids as $index => $jurnalId) {
+            // Loop melalui data 'jurnals' yang dikirim dari form
+            foreach ($request->input('jurnals') as $jurnalData) {
                 try {
-                    $jurnal = Jurnal::find($jurnalId);
+                    $jurnal = Jurnal::find($jurnalData['id']);
                     if (!$jurnal) {
+                        $errors[] = "Jurnal dengan ID {$jurnalData['id']} tidak ditemukan.";
                         continue;
                     }
 
                     // Update data untuk setiap jurnal
-                    $updateData = [];
-                    
-                    if (isset($request->judul[$index])) {
-                        $updateData['judul'] = $request->judul[$index];
-                    }
-                    
-                    if (isset($request->pengarang[$index])) {
-                        $updateData['pengarang'] = $request->pengarang[$index];
-                    }
-                    
-                    if (isset($request->tahun_publikasi[$index])) {
-                        $updateData['tahun_publikasi'] = $request->tahun_publikasi[$index];
-                    }
-                    
-                    if (isset($request->departemen[$index])) {
-                        $updateData['departemen'] = $request->departemen[$index];
-                    }
-                    
-                    if (isset($request->prodi[$index])) {
-                        $updateData['prodi'] = $request->prodi[$index];
-                    }
+                    $jurnal->update([
+                        'judul' => $jurnalData['judul'],
+                        'pengarang' => $jurnalData['pengarang'],
+                        'tipe_referensi' => $jurnalData['tipe_referensi'],
+                        'tahun_publikasi' => $jurnalData['tahun_publikasi'],
+                        'departemen' => $jurnalData['departemen'] ?? null, // Gunakan null coalescing jika opsional
+                        'prodi' => $jurnalData['prodi'] ?? null,
+                        'semester' => $jurnalData['semester'] ?? null,
+                        'mata_kuliah' => $jurnalData['mata_kuliah'] ?? null,
+                        'abstrak' => $jurnalData['abstrak'] ?? null,
+                        'doi' => $jurnalData['doi'] ?? null, // Pastikan ini sesuai dengan nama kolom di DB
+                        // 'issue' => $jurnalData['issue'] ?? null,
+                        // 'banyak_halaman' => $jurnalData['halaman'] ?? null,
+                         'user_id' => Auth::id(),
+                    ]);
 
-                    if (isset($request->abstrak[$index])) {
-                        $updateData['abstrak'] = $request->abstrak[$index];
-                    }
-
-                    if (isset($request->tipe_referensi[$index])) {
-                        $updateData['tipe_referensi'] = $request->tipe_referensi[$index];
-                    }
-
-                    if (isset($request->penerbit[$index])) {
-                        $updateData['penerbit'] = $request->penerbit[$index];
-                    }
-
-                    if (isset($request->volume[$index])) {
-                        $updateData['volume'] = $request->volume[$index];
-                    }
-
-                    if (!empty($updateData)) {
-                        $jurnal->update($updateData);
-                        $updatedCount++;
-                    }
+                    $updatedCount++;
 
                 } catch (\Exception $e) {
-                    $errors[] = "Error updating jurnal ID {$jurnalId}: " . $e->getMessage();
+                    $errors[] = "Error updating jurnal ID {$jurnalData['id']}: " . $e->getMessage();
                 }
             }
 
             if ($updatedCount > 0) {
                 $message = "Berhasil memperbarui {$updatedCount} jurnal.";
                 if (!empty($errors)) {
-                    $message .= " Terdapat " . count($errors) . " error.";
+                    $message .= " Terdapat " . count($errors) . " error: " . implode(' ', $errors);
                 }
-                return redirect()->route('home')->with('success', $message);
+                return redirect()->route('jurnal.my')->with('success', $message); // Redirect ke halaman jurnal saya
             } else {
                 return redirect()->back()->with('error', 'Tidak ada data yang diperbarui. ' . implode(' ', $errors));
             }
 
+        } catch (ValidationException $e) { // Tangani khusus ValidationException
+            // Ini akan memastikan pesan error validasi kembali ke form
+            return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            \Log::error('Error in bulk update: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            \Log::error('Error in bulk update (outer catch): ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan umum saat pembaruan massal: ' . $e->getMessage());
         }
     }
 
